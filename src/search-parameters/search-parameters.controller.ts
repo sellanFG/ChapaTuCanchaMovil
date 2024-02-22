@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SearchParametersService } from './search-parameters.service';
 import { CreateSearchParameterDto } from './dto/create-search-parameter.dto';
 import { UpdateSearchParameterDto } from './dto/update-search-parameter.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('search-parameters')
 @Controller('search-parameters')
 export class SearchParametersController {
   constructor(private readonly searchParametersService: SearchParametersService) {}

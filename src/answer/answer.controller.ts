@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { answer } from '@prisma/client';
 import { AnswerService } from './answer.service';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateAnswerDto, UpdateAnswerDto } from './dto/index';
+import { Answer } from './entities/answer.entity';
 
 @ApiTags('answer')
 @Controller('answer')
@@ -10,27 +19,32 @@ export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
   @Post()
-  create(@Body() createAnswerDto: CreateAnswerDto) {
+  @ApiCreatedResponse({ type: Answer })
+  create(@Body() createAnswerDto: CreateAnswerDto): Promise<answer> {
     return this.answerService.create(createAnswerDto);
   }
 
   @Get()
-  findAll() {
+  @ApiOkResponse({ type: [Answer] })
+  findAll(): Promise<answer[]> {
     return this.answerService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.answerService.findOne(+id);
+  @ApiOkResponse({ type: Answer })
+  findOne(@Param('id') id: number): Promise<answer> {
+    return this.answerService.findOne({ answerId: id });
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
-    return this.answerService.update(+id, updateAnswerDto);
+  @ApiOkResponse({ type: Answer })
+  update(@Param('id') id: number, @Body() updateAnswerDto: UpdateAnswerDto) {
+    return this.answerService.update(id, updateAnswerDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.answerService.remove(+id);
+  @ApiOkResponse({ type: Answer })
+  remove(@Param('id') id: number) {
+    return this.answerService.remove(id);
   }
 }

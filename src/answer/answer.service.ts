@@ -1,26 +1,67 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAnswerDto } from './dto/create-answer.dto';
-import { UpdateAnswerDto } from './dto/update-answer.dto';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma, answer } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateAnswerDto, UpdateAnswerDto } from './dto/index';
 @Injectable()
 export class AnswerService {
-  create(createAnswerDto: CreateAnswerDto) {
-    return 'This action adds a new answer';
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: CreateAnswerDto): Promise<answer> {
+    const questionId = data.questionId;
+
+    const question = await this.prisma.teamplateQuestions.findUnique({
+      where: {
+        teamplateQuestionsId: questionId,
+      },
+    });
+
+    if (!question) {
+      throw new NotFoundException(`Question with id ${questionId} not found`);
+    }
+
+    return this.prisma.answer.create({
+      data: {
+        answer: data.answer,
+        teamplateQuestionsId: questionId,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all answer`;
+  findAll(): Promise<answer[]> {
+    return this.prisma.answer.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} answer`;
+  async findOne(data: Prisma.answerWhereUniqueInput): Promise<answer> {
+    const answer = await this.prisma.answer.findUnique({
+      where: data,
+    });
+
+    if (!answer) {
+      throw new NotFoundException(`Answer with id ${data.answerId} not found`);
+    }
+
+    return answer;
   }
 
-  update(id: number, updateAnswerDto: UpdateAnswerDto) {
-    return `This action updates a #${id} answer`;
+  async update(id: number, updateAnswerDto: UpdateAnswerDto): Promise<answer> {
+    const { questionId, answer } = updateAnswerDto;
+    console.log(questionId, answer, id);
+    await this.findOne({ answerId: id });
+
+    return this.prisma.answer.update({
+      where: { answerId: id },
+      data: {
+        answer,
+        teamplateQuestionsId: questionId,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} answer`;
+  async remove(id: number): Promise<answer> {
+    await this.findOne({ answerId: id });
+
+    return this.prisma.answer.delete({
+      where: { answerId: id },
+    });
   }
 }

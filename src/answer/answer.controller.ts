@@ -15,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { answer } from '@prisma/client';
 import { AnswerService } from './answer.service';
-import { CreateAnswerDto, UpdateAnswerDto } from './dto/index';
 import { Answer } from './entities/answer.entity';
 
 @ApiTags('answer')

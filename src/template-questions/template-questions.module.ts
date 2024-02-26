@@ -8,5 +8,6 @@ import { TemplateQuestionsService } from './template-questions.service';
   controllers: [TemplateQuestionsController],
   providers: [TemplateQuestionsService],
   imports: [PrismaModule, SportModule],
+  exports: [TemplateQuestionsService],
 })
 export class TemplateQuestionsModule {}

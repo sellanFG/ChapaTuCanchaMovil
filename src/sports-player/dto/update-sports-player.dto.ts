@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateSportsPlayerDto } from './create-sports-player.dto';
+import { IsNotEmpty, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateSportsPlayerDto extends PartialType(CreateSportsPlayerDto) {}
+export class UpdateSportsPlayerDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  sportId: number;
+}

@@ -24,4 +24,19 @@ export class AnswerService {
       }),
     );
   }
+
+  async getAnswerById(id: number): Promise<answer> {
+    const answer = await this.prisma.handleDbOperation(
+      this.prisma.answer.findUnique({
+        where: {
+          answerId: id,
+        },
+      }),
+    );
+
+    if (!answer) {
+      throw new NotFoundException(`Answer with id ${id} not found`);
+    }
+    return answer;
+  }
 }

@@ -1,13 +1,15 @@
 import {ApiProperty} from '@nestjs/swagger'
 import { IsDate, IsNotEmpty, IsBoolean, IsNumber, IsOptional, IsString, Max, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateMatchDto {
-
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @IsNotEmpty()
     @ApiProperty()
     matchDate: Date;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @IsNotEmpty()
     @ApiProperty()
@@ -19,6 +21,7 @@ export class CreateMatchDto {
     @ApiProperty()
     matchDistrict: string;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @IsNotEmpty()
     @ApiProperty()

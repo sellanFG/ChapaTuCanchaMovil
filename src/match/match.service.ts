@@ -15,15 +15,29 @@ export class MatchService {
         private sportfield: SportFieldService,
         private sport: SportService) {}
 
-    getMatches(): Promise<Match[]> {
-        return this.prisma.handleDbOperation(this.prisma.match.findMany(
-            {
-                include: {
-                    Sport: true,
-                    GameMode: true,
-                    SportField: true}}
-        ));
-    }
+        getMatches(): Promise<Match[]> {
+            return this.prisma.handleDbOperation(this.prisma.match.findMany(
+                {
+                    include: {
+                        Sport: {
+                            select: {
+                                SportName: true
+                            }
+                        },
+                        GameMode: {
+                            select: {
+                                GameModeName: true
+                            }
+                        },
+                        SportField: {
+                            select: {
+                                sportFieldName: true
+                            }
+                        }
+                    }
+                }
+            ));
+        }
 
     async getMatchById(id: number): Promise<Match> {
         const match = await this.prisma.handleDbOperation(

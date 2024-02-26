@@ -18,7 +18,13 @@ export class MatchService {
         getMatches(): Promise<Match[]> {
             return this.prisma.handleDbOperation(this.prisma.match.findMany(
                 {
-                    include: {
+                    select: {
+                        matchId: true,
+                        matchDate: true,
+                        matchTime: true,
+                        matchDistrict: true,
+                        matchRegistrationDate: true,
+                        stateField: true,
                         Sport: {
                             select: {
                                 SportName: true

@@ -15,7 +15,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     try {
       return await operation;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(error.message);
     }
   }
 }

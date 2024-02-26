@@ -21,7 +21,7 @@ export class SportService {
     return sport;
   }
 
-  async validateSports(ids: number[]): Promise<number[]> {
+  async validateSports(ids: number[]): Promise<void> {
     const foundSports = await this.prisma.handleDbOperation(
       this.prisma.sport.findMany({
         where: {
@@ -32,28 +32,11 @@ export class SportService {
       }),
     );
 
-    const badIds = [];
-    if (foundSports.length != ids.length) {
-      let i = 0,
-        j = 0;
-      while (i < foundSports.length && j < ids.length) {
-        const sportId = (await foundSports[i]).SportId;
-        const id = ids[j];
-
-        if (sportId == id) {
-          i++;
-          j++;
-        } else {
-          badIds.push(id);
-          j++;
-        }
-      }
-
-      for (let i = j; i < ids.length; i++) {
-        badIds.push(ids[i]);
-      }
+    const foundIds = new Set(foundSports.map((sport) => sport.SportId));
+    const badIds = ids.filter((id) => !foundIds.has(id));
+    if (badIds.length != 0) {
+      throw new NotFoundException(`Invalid ids: ${badIds.join(', ')}`);
     }
-    return badIds;
   }
 
   async getSports(): Promise<Sport[]> {

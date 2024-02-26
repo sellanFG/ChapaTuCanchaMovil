@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException,BadRequestException } from '@nestjs/common';
 import { player } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePlayerDto, UpdatePlayerDto } from './dto';
@@ -8,7 +8,11 @@ export class PlayerService {
   constructor(private prisma: PrismaService) {}
 
   async getPlayers(): Promise<player[]> {
-    return this.prisma.player.findMany();
+    /*return this.prisma.player.findMany();*/
+    const players = await this.prisma.handleDbOperation(
+      this.prisma.player.findMany(),
+    );
+    return players;
   }
 
   async getPlayerById(id: number): Promise<player> {
@@ -26,19 +30,52 @@ export class PlayerService {
   }
 
   async createPlayer(data: CreatePlayerDto): Promise<player> {
-    return this.prisma.player.create({ data });
+    /*return this.prisma.player.create({ data });
+  */
+    const playerCreated = await this.prisma.handleDbOperation(
+      this.prisma.player.create({
+        data,
+      }),
+    );
+      if (!playerCreated) {
+        throw new BadRequestException(`Player not created`);
+      }
+      return playerCreated;
+
   }
 
   async updatePlayer(id: number, data: UpdatePlayerDto): Promise<player> {
-    return this.prisma.player.update({
+    /*return this.prisma.player.update({
       where: { playerId: id },
       data,
-    });
+    });*/
+    const playerUpdated = await this.prisma.handleDbOperation(
+      this.prisma.player.update({
+        where: { playerId: id },
+        data,
+      }),
+    );
+      if (!playerUpdated) {
+        throw new BadRequestException(`Player not updated`);
+      }
+      return playerUpdated;
+
   }
 
   async deletePlayer(id: number): Promise<player> {
-    return this.prisma.player.delete({
+   /* return this.prisma.player.delete({
       where: { playerId: id },
     });
+  }*/
+  const playerDeleted = await this.prisma.handleDbOperation(
+    this.prisma.player.delete({
+      where: { playerId: id },
+    }),
+  );
+    if (!playerDeleted) {
+      throw new BadRequestException(`Player not deleted`);
+    }
+    return playerDeleted;
+
   }
 }

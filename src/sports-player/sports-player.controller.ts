@@ -1,48 +1,58 @@
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateSportsPlayerDto, UpdateSportsPlayerDto } from './dto';
-import { SportsPlayerPost } from './entities/sports-player-post.entity';
-import { SportsPlayer } from './entities/sports-player.entity';
 import { SportsPlayerService } from './sports-player.service';
+import { SportsPlayerEntity } from './entities/sports-player.entity';
+import { SportService } from '../sport/sport.service';
+import { PlayerService } from '../player/player.service';
 
 @ApiTags('sports-player')
 @Controller('sports-player')
 export class SportsPlayerController {
-  constructor(private readonly sportsPlayerService: SportsPlayerService) {}
+  constructor(
+    private readonly sportsPlayerService: SportsPlayerService,
+    private sportService: SportService,
+    private playerService: PlayerService,
+  ) {}
 
   @Post()
-  @ApiCreatedResponse({ type: SportsPlayerPost })
-  create(@Body() createSportsPlayerDto: CreateSportsPlayerDto) {
-    return this.sportsPlayerService.create(createSportsPlayerDto);
+  @ApiCreatedResponse({ type: [SportsPlayerEntity] })
+  async create(@Body() createSportsPlayerDto: CreateSportsPlayerDto) {
+    //Verify if sports and player exist
+    const { sportsId, playerId } = createSportsPlayerDto;
+    await this.playerService.getPlayerById(playerId);
+    await this.sportService.validateSports(sportsId);
+
+    return this.sportsPlayerService.create(playerId, sportsId);
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: [SportsPlayer] })
-  findOne(@Param('id') id: number) {
-    return this.sportsPlayerService.findAllSportsPlayer(id);
+  @ApiOkResponse({ type: [SportsPlayerEntity] })
+  @ApiParam({ name: 'id', description: 'Player id', type: Number })
+  async getAllSportsPlayer(@Param('id') id: number) {
+    //Verify if the player exists
+    await this.playerService.getPlayerById(id);
+    return this.sportsPlayerService.getAllSportsPlayer(id);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
+  @ApiOkResponse({ type: [SportsPlayerEntity] })
+  @ApiParam({ name: 'id', description: 'Player id', type: Number })
+  async update(
+    @Param('id') id: number,
     @Body() updateSportsPlayerDto: UpdateSportsPlayerDto,
-  ) {
-    return this.sportsPlayerService.update(+id, updateSportsPlayerDto);
-  }
+  ): Promise<SportsPlayerEntity[]> {
+    //Verify if sport and player exist
+    const { sportId } = updateSportsPlayerDto;
+    await this.playerService.getPlayerById(id);
+    await this.sportService.getSportById(sportId);
 
-  @Delete(':playerId/:sportId')
-  remove(
-    @Param('playerId') playerId: number,
-    @Param('sportId') sportId: number,
-  ) {
-    // return this.sportsPlayerService.remove(+id);
+    await this.sportsPlayerService.update(id, sportId);
+    return this.sportsPlayerService.getAllSportsPlayer(id);
   }
 }

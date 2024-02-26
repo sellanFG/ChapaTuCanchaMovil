@@ -55,4 +55,8 @@ export class SportService {
     }
     return badIds;
   }
+
+  async getSports(): Promise<Sport[]> {
+    return this.prisma.handleDbOperation(this.prisma.sport.findMany());
+  }
 }

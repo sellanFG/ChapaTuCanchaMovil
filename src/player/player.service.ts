@@ -1,37 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { player } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePlayerDto,UpdatePlayerDto } from './dto';
+import { CreatePlayerDto, UpdatePlayerDto } from './dto';
 
 @Injectable()
 export class PlayerService {
+  constructor(private prisma: PrismaService) {}
 
-    constructor(private prisma: PrismaService){}
+  async getPlayers(): Promise<player[]> {
+    return this.prisma.player.findMany();
+  }
 
-    async getPlayers(): Promise<player[]>{
-        return this.prisma.player.findMany();
+  async getPlayerById(id: number): Promise<player> {
+    const playerFound = await this.prisma.handleDbOperation(
+      this.prisma.player.findUnique({
+        where: { playerId: id },
+      }),
+    );
+
+    if (!playerFound) {
+      throw new NotFoundException(`Player with ID ${id} not found`);
     }
 
-    async getPlayerById(id: number): Promise<player>{
-        return this.prisma.player.findUnique({
-            where: {playerId: id}
-        });
-    }
+    return playerFound;
+  }
 
-    async createPlayer(data: CreatePlayerDto): Promise<player>{
-        return this.prisma.player.create({ data });
-    }
+  async createPlayer(data: CreatePlayerDto): Promise<player> {
+    return this.prisma.player.create({ data });
+  }
 
-    async updatePlayer(id: number, data: UpdatePlayerDto): Promise<player>{
-        return this.prisma.player.update({
-            where: {playerId: id},
-            data
-        });
-    }
+  async updatePlayer(id: number, data: UpdatePlayerDto): Promise<player> {
+    return this.prisma.player.update({
+      where: { playerId: id },
+      data,
+    });
+  }
 
-    async deletePlayer(id: number): Promise<player>{
-        return this.prisma.player.delete({
-            where: {playerId: id}
-        });
-    }
+  async deletePlayer(id: number): Promise<player> {
+    return this.prisma.player.delete({
+      where: { playerId: id },
+    });
+  }
 }

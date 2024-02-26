@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TeamplateQuestions } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SportService } from 'src/sport/sport.service';
@@ -20,5 +20,19 @@ export class TemplateQuestionsService {
         },
       }),
     );
+  }
+
+  async getById(questionId: number): Promise<TeamplateQuestions> {
+    const question = await this.prisma.handleDbOperation(
+      this.prisma.teamplateQuestions.findUnique({
+        where: {
+          teamplateQuestionsId: questionId,
+        },
+      }),
+    );
+    if (!question) {
+      throw new NotFoundException(`Question with id ${questionId} not found`);
+    }
+    return question;
   }
 }

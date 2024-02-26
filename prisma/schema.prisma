@@ -130,6 +130,7 @@ model sportPlayer{
   SportId Int
   player player @relation(fields: [playerId], references: [playerId])
   playerId Int
+  status      Boolean       @default(true)
   @@id([SportId, playerId])
   preferences preferences[]
 }

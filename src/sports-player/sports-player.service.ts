@@ -1,65 +1,116 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { sportPlayer } from '@prisma/client';
-import { PlayerService } from 'src/player/player.service';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SportService } from 'src/sport/sport.service';
-import { CreateSportsPlayerDto, UpdateSportsPlayerDto } from './dto';
+import { SportsPlayerEntity } from './entities/sports-player.entity';
 
 @Injectable()
 export class SportsPlayerService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly sportService: SportService,
-    private readonly playerService: PlayerService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
-    createSportsPlayerDto: CreateSportsPlayerDto,
-  ): Promise<sportPlayer> {
-    const { sportsId, playerId } = createSportsPlayerDto;
+    playerId: number,
+    sportsId: number[],
+  ): Promise<SportsPlayerEntity[]> {
+    //Update sports registered
+    const idsNotRegisters = await this.updateSportsRegistered(
+      playerId,
+      sportsId,
+    );
 
-    await this.playerService.getPlayerById(playerId);
-
-    const badIds = await this.sportService.validateSports(sportsId);
-
-    if (badIds.length != 0) {
-      throw new NotFoundException(`Invalid ids: ${badIds.join(', ')}`);
-    }
-
+    //New sports registers
     const registers = [];
-    for (const sportId of sportsId) {
+    for (const sportId of idsNotRegisters) {
       registers.push({ playerId: playerId, SportId: sportId });
     }
-
-    return this.prisma.handleDbOperation(
+    await this.prisma.handleDbOperation(
       this.prisma.sportPlayer.createMany({
         data: registers,
-        skipDuplicates: true,
       }),
     );
+
+    return this.getAllSportsPlayer(playerId, sportsId);
   }
 
-  async findAllSportsPlayer(id: number) {
-    await this.playerService.getPlayerById(id);
+  private async updateSportsRegistered(
+    playerId: number,
+    ids: number[],
+  ): Promise<number[]> {
+    const registers = await this.prisma.handleDbOperation(
+      this.prisma.sportPlayer.findMany({
+        where: {
+          SportId: {
+            in: ids,
+          },
+        },
+      }),
+    );
+    //Update sports registered
+    await this.updateMany(playerId, ids);
 
+    const registeredIds = registers.map(
+      (registered: any) => registered.SportId,
+    );
+    const setRegisters = new Set(registeredIds);
+    return ids.filter((id) => !setRegisters.has(id));
+  }
+
+  async getAllSportsPlayer(
+    id: number,
+    sportIds?: number[],
+  ): Promise<SportsPlayerEntity[]> {
     return this.prisma.handleDbOperation(
       this.prisma.sportPlayer.findMany({
         where: {
           playerId: id,
+          status: true,
+          SportId: {
+            in: sportIds,
+          },
+        },
+        include: {
+          sport: {
+            select: {
+              SportName: true,
+              SportDescription: true,
+              SportImage: true,
+            },
+          },
         },
       }),
     );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sportsPlayer`;
+  private async updateMany(
+    playerId: number,
+    sportIds: number[],
+  ): Promise<void> {
+    await this.prisma.handleDbOperation(
+      this.prisma.sportPlayer.updateMany({
+        where: {
+          playerId: playerId,
+          SportId: {
+            in: sportIds,
+          },
+        },
+        data: {
+          status: true,
+        },
+      }),
+    );
   }
 
-  update(id: number, updateSportsPlayerDto: UpdateSportsPlayerDto) {
-    return `This action updates a #${id} sportsPlayer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} sportsPlayer`;
+  async update(id: number, sportId: number): Promise<void> {
+    await this.prisma.handleDbOperation(
+      this.prisma.sportPlayer.update({
+        where: {
+          SportId_playerId: {
+            playerId: id,
+            SportId: sportId,
+          },
+        },
+        data: {
+          status: false,
+        },
+      }),
+    );
   }
 }

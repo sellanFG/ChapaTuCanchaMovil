@@ -7,7 +7,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { answer } from '@prisma/client';
 import { AnswerService } from './answer.service';
 import { CreateAnswerDto, UpdateAnswerDto } from './dto/index';
@@ -18,33 +23,16 @@ import { Answer } from './entities/answer.entity';
 export class AnswerController {
   constructor(private readonly answerService: AnswerService) {}
 
-  @Post()
-  @ApiCreatedResponse({ type: Answer })
-  create(@Body() createAnswerDto: CreateAnswerDto): Promise<answer> {
-    return this.answerService.create(createAnswerDto);
-  }
-
   @Get()
   @ApiOkResponse({ type: [Answer] })
-  findAll(): Promise<answer[]> {
-    return this.answerService.findAll();
+  getAll(): Promise<answer[]> {
+    return this.answerService.getAll();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: Answer })
-  findOne(@Param('id') id: number): Promise<answer> {
-    return this.answerService.findOne({ answerId: id });
-  }
-
-  @Patch(':id')
-  @ApiOkResponse({ type: Answer })
-  update(@Param('id') id: number, @Body() updateAnswerDto: UpdateAnswerDto) {
-    return this.answerService.update(id, updateAnswerDto);
-  }
-
-  @Delete(':id')
-  @ApiOkResponse({ type: Answer })
-  remove(@Param('id') id: number) {
-    return this.answerService.remove(id);
+  @ApiOkResponse({ type: [Answer] })
+  @ApiParam({ name: 'id', description: 'Question id', type: 'number' })
+  getAllAnswersQuestionId(@Param('id') id: number): Promise<answer[]> {
+    return this.answerService.getAllAnswersQuestionId(id);
   }
 }

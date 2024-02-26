@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { CreateSportsPlayerDto, UpdateSportsPlayerDto } from './dto';
+import { SportsPlayerPost } from './entities/sports-player-post.entity';
+import { SportsPlayer } from './entities/sports-player.entity';
 import { SportsPlayerService } from './sports-player.service';
-import { CreateSportsPlayerDto } from './dto/create-sports-player.dto';
-import { UpdateSportsPlayerDto } from './dto/update-sports-player.dto';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('sports-player')
 @Controller('sports-player')
@@ -10,27 +19,30 @@ export class SportsPlayerController {
   constructor(private readonly sportsPlayerService: SportsPlayerService) {}
 
   @Post()
+  @ApiCreatedResponse({ type: SportsPlayerPost })
   create(@Body() createSportsPlayerDto: CreateSportsPlayerDto) {
     return this.sportsPlayerService.create(createSportsPlayerDto);
   }
 
-  @Get()
-  findAll() {
-    return this.sportsPlayerService.findAll();
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sportsPlayerService.findOne(+id);
+  @ApiOkResponse({ type: [SportsPlayer] })
+  findOne(@Param('id') id: number) {
+    return this.sportsPlayerService.findAllSportsPlayer(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSportsPlayerDto: UpdateSportsPlayerDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSportsPlayerDto: UpdateSportsPlayerDto,
+  ) {
     return this.sportsPlayerService.update(+id, updateSportsPlayerDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sportsPlayerService.remove(+id);
+  @Delete(':playerId/:sportId')
+  remove(
+    @Param('playerId') playerId: number,
+    @Param('sportId') sportId: number,
+  ) {
+    // return this.sportsPlayerService.remove(+id);
   }
 }

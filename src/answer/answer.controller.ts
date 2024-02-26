@@ -29,9 +29,16 @@ export class AnswerController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: Answer })
+  @ApiParam({ name: 'id', description: 'Answer id', type: 'number' })
+  getAnswerById(@Param('id') answerId: number): Promise<answer> {
+    return this.answerService.getAnswerById(answerId);
+  }
+
+  @Get('question/:id')
   @ApiOkResponse({ type: [Answer] })
   @ApiParam({ name: 'id', description: 'Question id', type: 'number' })
-  getAllAnswersQuestionId(@Param('id') id: number): Promise<answer[]> {
-    return this.answerService.getAllAnswersQuestionId(id);
+  getAllAnswersQuestionId(@Param('id') questionsId: number): Promise<answer[]> {
+    return this.answerService.getAllAnswersQuestionId(questionsId);
   }
 }

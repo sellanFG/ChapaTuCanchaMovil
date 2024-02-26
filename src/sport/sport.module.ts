@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { PrismaModule } from 'src/prisma/prisma.module';
 import { SportService } from './sport.service';
-import { SportController } from './sport.controller';
 
 @Module({
-  controllers: [SportController],
   providers: [SportService],
+  exports: [SportService],
+  imports: [PrismaModule],
 })
 export class SportModule {}

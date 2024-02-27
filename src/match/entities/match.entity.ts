@@ -20,13 +20,19 @@ export class match {
     stateField: boolean;
 
     @ApiProperty()
-    sportId: number;
+    Sport: {
+        SportName: string;
+    }
 
     @ApiProperty()
-    gameModeId: number;
+    GameMode: {
+        GameModeName: string;
+      };
 
     @ApiProperty()
-    SportFieldId: number;
+    SportField: {
+        sportFieldName: string;
+      };
     
 
 }

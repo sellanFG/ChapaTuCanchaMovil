@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post,Param } from '@nestjs/common';
+import { Body, Controller, Get, Post,Param, Delete, Patch } from '@nestjs/common';
 import { TeamService } from './team.service';
 import { ApiOkResponse, ApiParam, ApiTags,ApiCreatedResponse, ApiNoContentResponse } from '@nestjs/swagger';
 import { Team } from '@prisma/client';
@@ -36,14 +36,14 @@ export class TeamController {
     return this.teamService.createTeam(data);
   }
 
-  @Post(':id')
+  @Patch(':id')
   @ApiOkResponse({description: 'Team updated successfully'})
   @ApiParam({name: 'id', description: 'Team id', type: 'number'})
   updateTeam(@Body() data: UpdateTeamDto, @Param('id') id: number): Promise<Team> {
     return this.teamService.updateTeam(id, data);
   }
 
-  @Post(':id')
+  @Delete(':id')
   @ApiNoContentResponse({description: 'Team deleted successfully'})
   @ApiParam({name: 'id', description: 'Team id', type: 'number'})
   deleteTeam(@Param('id') id: number): Promise<Team> {

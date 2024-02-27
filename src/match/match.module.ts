@@ -4,7 +4,6 @@ import { MatchController } from './match.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { GameModeModule } from 'src/game-mode/game-mode.module';
 import { SportFieldModule } from 'src/sport-field/sport-field.module';
-import { SportFieldService } from 'src/sport-field/sport-field.service';
 import { SportModule } from 'src/sport/sport.module';
 
 @Module({

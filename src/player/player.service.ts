@@ -8,7 +8,6 @@ export class PlayerService {
   constructor(private prisma: PrismaService) {}
 
   async getPlayers(): Promise<player[]> {
-    /*return this.prisma.player.findMany();*/
     const players = await this.prisma.handleDbOperation(
       this.prisma.player.findMany(),
     );
@@ -30,8 +29,7 @@ export class PlayerService {
   }
 
   async createPlayer(data: CreatePlayerDto): Promise<player> {
-    /*return this.prisma.player.create({ data });
-  */
+  
     const playerCreated = await this.prisma.handleDbOperation(
       this.prisma.player.create({
         data,
@@ -45,10 +43,7 @@ export class PlayerService {
   }
 
   async updatePlayer(id: number, data: UpdatePlayerDto): Promise<player> {
-    /*return this.prisma.player.update({
-      where: { playerId: id },
-      data,
-    });*/
+    
     const playerUpdated = await this.prisma.handleDbOperation(
       this.prisma.player.update({
         where: { playerId: id },
@@ -63,10 +58,7 @@ export class PlayerService {
   }
 
   async deletePlayer(id: number): Promise<player> {
-   /* return this.prisma.player.delete({
-      where: { playerId: id },
-    });
-  }*/
+   
   const playerDeleted = await this.prisma.handleDbOperation(
     this.prisma.player.delete({
       where: { playerId: id },
@@ -77,5 +69,18 @@ export class PlayerService {
     }
     return playerDeleted;
 
+  }
+
+  async getPlayerInfo(id: number): Promise<any>{
+    return this.prisma.handleDbOperation(this.prisma.player.findUnique({
+      where:{
+        playerId: id
+      },
+      select:{
+        playerFirstName: true,
+        playerLastName: true,
+        playerPhoneNumber: true
+      }
+    }));
   }
 }

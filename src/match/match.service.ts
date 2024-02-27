@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SportFieldService } from 'src/sport-field/sport-field.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { SportService } from 'src/sport/sport.service';
+import { match } from './entities/match.entity';
 
 @Injectable()
 export class MatchService {
@@ -15,7 +16,7 @@ export class MatchService {
         private sportfield: SportFieldService,
         private sport: SportService) {}
 
-        getMatches(): Promise<Match[]> {
+        getMatches(): Promise<match[]> {
             return this.prisma.handleDbOperation(this.prisma.match.findMany(
                 {
                     select: {

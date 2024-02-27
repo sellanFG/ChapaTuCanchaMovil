@@ -11,7 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     await this.$connect();
   }
 
-  async handleDbOperation(operation: Promise<any>): Promise<any> {
+  async handleDbOperation<T>(operation: Promise<T>): Promise<T> {
     try {
       return await operation;
     } catch (error) {

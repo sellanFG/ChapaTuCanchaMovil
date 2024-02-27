@@ -11,7 +11,7 @@ import { SportFieldModule } from './sport-field/sport-field.module';
 import { SportModule } from './sport/sport.module';
 import { TeamMatchModule } from './team-match/team-match.module';
 import { TeamModule } from './team/team.module';
-import { TemplateQuestionsModule } from './template-questions/template-questions.module';
+import { QuestionsTemplateModule } from './template-questions/questions-template.module';
 import { MembersMatchModule } from './members-match/members-match.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SportsPlayerModule } from './sports-player/sports-player.module';
@@ -26,7 +26,7 @@ import { SearchParametersModule } from './search-parameters/search-parameters.mo
     PreferencesModule,
     MembersModule,
     TeamMatchModule,
-    TemplateQuestionsModule,
+    QuestionsTemplateModule,
     GameModeModule,
     SportFieldModule,
     PlayerModule,

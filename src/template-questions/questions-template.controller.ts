@@ -1,14 +1,14 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { TeamplateQuestions } from '@prisma/client';
+import { QuestionsTemplate } from '@prisma/client';
 import { TemplateQuestions } from './entities/template-questions.entity';
-import { TemplateQuestionsService } from './template-questions.service';
+import { QuestionsTemplateService } from './questions-template.service';
 
 @ApiTags('template-questions')
 @Controller('template-questions')
-export class TemplateQuestionsController {
+export class QuestionsTemplateController {
   constructor(
-    private readonly templateQuestionsService: TemplateQuestionsService,
+    private readonly templateQuestionsService: QuestionsTemplateService,
   ) {}
 
   @Get(':id')
@@ -19,7 +19,7 @@ export class TemplateQuestionsController {
   @ApiParam({ name: 'id', description: 'Sport id', type: 'number' })
   async getAllQuestionsSportId(
     @Param('id') id: number,
-  ): Promise<TeamplateQuestions[]> {
+  ): Promise<QuestionsTemplate[]> {
     return this.templateQuestionsService.getAllQuestionsSportId(id);
   }
 }

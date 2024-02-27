@@ -1,17 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TemplateQuestionsController } from './template-questions.controller';
-import { TemplateQuestionsService } from './template-questions.service';
+import { QuestionsTemplateController } from './questions-template.controller';
+import { QuestionsTemplateService } from './questions-template.service';
 
 describe('TemplateQuestionsController', () => {
-  let controller: TemplateQuestionsController;
+  let controller: QuestionsTemplateController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [TemplateQuestionsController],
-      providers: [TemplateQuestionsService],
+      controllers: [QuestionsTemplateController],
+      providers: [QuestionsTemplateService],
     }).compile();
 
-    controller = module.get<TemplateQuestionsController>(TemplateQuestionsController);
+    controller = module.get<QuestionsTemplateController>(
+      QuestionsTemplateController,
+    );
   });
 
   it('should be defined', () => {

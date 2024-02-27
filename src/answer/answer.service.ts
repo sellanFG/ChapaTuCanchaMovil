@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { answer } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TemplateQuestionsService } from 'src/template-questions/template-questions.service';
+import { QuestionsTemplateService } from 'src/template-questions/questions-template.service';
 @Injectable()
 export class AnswerService {
   constructor(
     private prisma: PrismaService,
-    private questionService: TemplateQuestionsService,
+    private questionService: QuestionsTemplateService,
   ) {}
 
   getAll(): Promise<answer[]> {
@@ -19,7 +19,7 @@ export class AnswerService {
     return this.prisma.handleDbOperation(
       this.prisma.answer.findMany({
         where: {
-          teamplateQuestionsId: questionId,
+          questionsTemplateId: questionId,
         },
       }),
     );

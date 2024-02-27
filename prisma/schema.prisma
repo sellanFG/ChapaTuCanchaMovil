@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -14,164 +14,169 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sport{
-  SportId Int @id @default(autoincrement())
-  SportName String @db.VarChar(30)
-  SportDescription String @db.VarChar(255)
-  SportImage String @db.VarChar(255)
-  gameMode GameMode[]
-  match Match?
-  templateQuestions TeamplateQuestions[]
-  searchParameters SearchParameters?
-  team Team[]
-  sportPlayer sportPlayer[]
+model Sport {
+  SportId           Int                 @id @default(autoincrement())
+  SportName         String              @db.VarChar(30)
+  SportDescription  String              @db.VarChar(255)
+  SportImage        String              @db.VarChar(255)
+  gameMode          GameMode[]
+  match             Match?
+  questionsTemplate QuestionsTemplate[]
+  searchParameters  SearchParameters?
+  team              Team[]
+  sportPlayer       sportPlayer[]
 }
 
 model GameMode {
-  GameModeId Int @id @default(autoincrement())
-  GameModeName String @db.VarChar(30)
-  GameModeDescription String @db.VarChar(255)
-  Sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int
-  searchParameters SearchParameters?
-  match Match?
+  GameModeId          Int               @id @default(autoincrement())
+  GameModeName        String            @db.VarChar(30)
+  GameModeDescription String            @db.VarChar(255)
+  Sport               Sport             @relation(fields: [SportId], references: [SportId])
+  SportId             Int
+  searchParameters    SearchParameters?
+  match               Match?
 }
 
 model SportField {
-  sportFieldId Int @id @default(autoincrement())
-  sportFieldName String @db.VarChar(100)
-  sportFieldAddress String @db.VarChar(255)
-  match Match[]
+  sportFieldId      Int     @id @default(autoincrement())
+  sportFieldName    String  @db.VarChar(100)
+  sportFieldAddress String  @db.VarChar(255)
+  match             Match[]
 }
 
 model Match {
-  matchId Int @id @default(autoincrement())
-  matchDate DateTime @db.Date()
-  matchTime DateTime @db.Timetz()
-  matchDistrict String @db.VarChar(50)
-  matchRegistrationDate DateTime @db.Timestamptz()
-  stateField Boolean @default(false)
-  Sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int @unique
-  GameMode GameMode @relation(fields: [GameModeId], references: [GameModeId])
-  GameModeId Int @unique
-  SportField SportField @relation(fields: [SportFieldId], references: [sportFieldId])
-  SportFieldId Int
-  teamMatch teamMatch[]
-  membersMatch membersMatch[]
+  matchId               Int            @id @default(autoincrement())
+  matchDate             DateTime       @db.Date()
+  matchTime             DateTime       @db.Timetz()
+  matchDistrict         String         @db.VarChar(50)
+  matchRegistrationDate DateTime       @db.Timestamptz()
+  stateField            Boolean        @default(false)
+  Sport                 Sport          @relation(fields: [SportId], references: [SportId])
+  SportId               Int            @unique
+  GameMode              GameMode       @relation(fields: [GameModeId], references: [GameModeId])
+  GameModeId            Int            @unique
+  SportField            SportField     @relation(fields: [SportFieldId], references: [sportFieldId])
+  SportFieldId          Int
+  teamMatch             teamMatch[]
+  membersMatch          membersMatch[]
 }
 
 model player {
-  playerId Int @id @default(autoincrement())
-  playerUserName String @db.VarChar(100)
-  playerPassword String @db.VarChar(100)
-  playerFirstName String @db.VarChar(100)
-  playerLastName String @db.VarChar(100)
-  playerPhoneNumber String @db.Char(9)
-  playerEmail String? @db.VarChar(100)
-  playerBirthDate DateTime @db.Date()
-  playerImage String @db.VarChar(255)
-  playerGender String @db.VarChar(20)
-  playerDistrict String @db.VarChar(50)
-  playerRegistrationDate DateTime @db.Timestamptz()
-  playerAvailability Boolean @default(false)
-  playerSubscription Boolean @default(false)
-  playerSearchStatus Boolean @default(false)
-  teamMatch teamMatch?
-  sportPlayer sportPlayer[]
-  members members[]
+  playerId               Int           @id @default(autoincrement())
+  playerUserName         String        @db.VarChar(100)
+  playerPassword         String        @db.VarChar(100)
+  playerFirstName        String        @db.VarChar(100)
+  playerLastName         String        @db.VarChar(100)
+  playerPhoneNumber      String        @db.Char(9)
+  playerEmail            String?       @db.VarChar(100)
+  playerBirthDate        DateTime      @db.Date()
+  playerImage            String        @db.VarChar(255)
+  playerGender           String        @db.VarChar(20)
+  playerDistrict         String        @db.VarChar(50)
+  playerRegistrationDate DateTime      @db.Timestamptz()
+  playerAvailability     Boolean       @default(false)
+  playerSubscription     Boolean       @default(false)
+  playerSearchStatus     Boolean       @default(false)
+  teamMatch              teamMatch?
+  sportPlayer            sportPlayer[]
+  members                members[]
 }
 
 model Team {
-  teamId Int @id @default(autoincrement())
-  teamName String @db.VarChar(100)
-  teamLogo String @db.VarChar(255)
-  teamRegistrationDate DateTime @db.Timestamptz()
-  teamSearchStatus String @db.Char(1)
-  Sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int
-  searchParameters SearchParameters[]
-  members members[]
-  teamMatch teamMatch[]
+  teamId               Int                @id @default(autoincrement())
+  teamName             String             @db.VarChar(100)
+  teamLogo             String             @db.VarChar(255)
+  teamRegistrationDate DateTime           @db.Timestamptz()
+  teamSearchStatus     String             @db.Char(1)
+  Sport                Sport              @relation(fields: [SportId], references: [SportId])
+  SportId              Int
+  searchParameters     SearchParameters[]
+  members              members[]
+  teamMatch            teamMatch[]
 }
 
-model SearchParameters{
-  searchParametersId Int @id @default(autoincrement())
-  searchParametersMatchDate DateTime @db.Date()
+model SearchParameters {
+  searchParametersId             Int      @id @default(autoincrement())
+  searchParametersMatchDate      DateTime @db.Date()
   searchParametersMatchStartTime DateTime @db.Timetz()
-  searchParametersMatchEndTime DateTime @db.Timetz()
-  searchParametersDistrict String @db.VarChar(50)
-  sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int @unique
-  gameMode GameMode @relation(fields: [GameModeId], references: [GameModeId])
-  GameModeId Int @unique
-  team Team @relation(fields: [TeamId], references: [teamId])
-  TeamId Int
+  searchParametersMatchEndTime   DateTime @db.Timetz()
+  searchParametersDistrict       String   @db.VarChar(50)
+  sport                          Sport    @relation(fields: [SportId], references: [SportId])
+  SportId                        Int      @unique
+  gameMode                       GameMode @relation(fields: [GameModeId], references: [GameModeId])
+  GameModeId                     Int      @unique
+  team                           Team     @relation(fields: [TeamId], references: [teamId])
+  TeamId                         Int
 }
 
-model TeamplateQuestions {
-  teamplateQuestionsId Int @id @default(autoincrement())
-  Question String @db.VarChar(255)
-  sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int
-  answer answer[]
+model QuestionsTemplate {
+  questionsTemplateId Int      @id @default(autoincrement())
+  Question            String   @db.VarChar(255)
+  sport               Sport    @relation(fields: [SportId], references: [SportId])
+  SportId             Int
+  answer              answer[]
 }
 
-model answer{
-  answerId Int @id @default(autoincrement())
-  answer String @db.VarChar(255)
-  question TeamplateQuestions @relation(fields: [teamplateQuestionsId], references: [teamplateQuestionsId])
-  teamplateQuestionsId Int
+model answer {
+  answerId            Int               @id @default(autoincrement())
+  answer              String            @db.VarChar(255)
+  question            QuestionsTemplate @relation(fields: [questionsTemplateId], references: [questionsTemplateId])
+  questionsTemplateId Int
+  preferences         preferences[]
+}
+
+model sportPlayer {
+  sport       Sport         @relation(fields: [SportId], references: [SportId])
+  SportId     Int
+  player      player        @relation(fields: [playerId], references: [playerId])
+  playerId    Int
   preferences preferences[]
-}
-
-model sportPlayer{
-  sport Sport @relation(fields: [SportId], references: [SportId])
-  SportId Int
-  player player @relation(fields: [playerId], references: [playerId])
-  playerId Int
   status      Boolean       @default(true)
+
   @@id([SportId, playerId])
-  preferences preferences[]
 }
 
 model preferences {
-  sportPlayer sportPlayer @relation(fields: [playerId,SportId], references: [playerId,SportId])
-  playerId Int
-  SportId Int
-  answer answer @relation(fields: [answerId], references: [answerId])
-  answerId Int
+  sportPlayer sportPlayer @relation(fields: [playerId, SportId], references: [playerId, SportId])
+  playerId    Int
+  SportId     Int
+  answer      answer      @relation(fields: [answerId], references: [answerId])
+  answerId    Int
+
   @@id([playerId, SportId, answerId])
 }
 
 model members {
-  player player @relation(fields: [playerId], references: [playerId])
-  playerId Int
-  team Team @relation(fields: [teamId], references: [teamId])
-  teamId Int
-  memberRole String @db.VarChar(1)
-  memberRegistrationDate DateTime @db.Timestamptz()
-  memberStatus Boolean @default(false)
+  player                 player         @relation(fields: [playerId], references: [playerId])
+  playerId               Int
+  team                   Team           @relation(fields: [teamId], references: [teamId])
+  teamId                 Int
+  memberRole             String         @db.VarChar(1)
+  memberRegistrationDate DateTime       @db.Timestamptz()
+  memberStatus           Boolean        @default(false)
+  membersMatch           membersMatch[]
+
   @@id([playerId, teamId])
-  membersMatch membersMatch[]
 }
 
-model teamMatch{
-  team Team @relation(fields: [teamId], references: [teamId])
-  teamId Int
-  match Match @relation(fields: [matchId], references: [matchId])
-  matchId Int
+model teamMatch {
+  team      Team    @relation(fields: [teamId], references: [teamId])
+  teamId    Int
+  match     Match   @relation(fields: [matchId], references: [matchId])
+  matchId   Int
   statusNFU Boolean @default(false)
-  player player @relation(fields: [playerId], references: [playerId])
-  playerId Int @unique
+  player    player  @relation(fields: [playerId], references: [playerId])
+  playerId  Int     @unique
+
   @@id([teamId, matchId])
 }
 
 model membersMatch {
-  members members @relation(fields: [playerId,teamId], references: [playerId,teamId])
+  members  members @relation(fields: [playerId, teamId], references: [playerId, teamId])
   playerId Int
-  teamId Int
-  match Match @relation(fields: [matchId], references: [matchId])
-  matchId Int
+  teamId   Int
+  match    Match   @relation(fields: [matchId], references: [matchId])
+  matchId  Int
+
   @@id([playerId, teamId, matchId])
 }

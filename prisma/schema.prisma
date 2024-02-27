@@ -22,18 +22,18 @@ model Sport {
   gameMode          GameMode[]
   match             Match?
   questionsTemplate QuestionsTemplate[]
-  searchParameters  SearchParameters?
+  searchParameters  SearchParameters[]
   team              Team[]
   sportPlayer       sportPlayer[]
 }
 
 model GameMode {
-  GameModeId          Int               @id @default(autoincrement())
-  GameModeName        String            @db.VarChar(30)
-  GameModeDescription String            @db.VarChar(255)
-  Sport               Sport             @relation(fields: [SportId], references: [SportId])
+  GameModeId          Int                @id @default(autoincrement())
+  GameModeName        String             @db.VarChar(30)
+  GameModeDescription String             @db.VarChar(255)
+  Sport               Sport              @relation(fields: [SportId], references: [SportId])
   SportId             Int
-  searchParameters    SearchParameters?
+  searchParameters    SearchParameters[]
   match               Match?
 }
 
@@ -102,9 +102,9 @@ model SearchParameters {
   searchParametersMatchEndTime   DateTime @db.Timetz()
   searchParametersDistrict       String   @db.VarChar(50)
   sport                          Sport    @relation(fields: [SportId], references: [SportId])
-  SportId                        Int      @unique
+  SportId                        Int
   gameMode                       GameMode @relation(fields: [GameModeId], references: [GameModeId])
-  GameModeId                     Int      @unique
+  GameModeId                     Int
   team                           Team     @relation(fields: [TeamId], references: [teamId])
   TeamId                         Int
 }

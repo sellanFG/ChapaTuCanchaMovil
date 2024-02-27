@@ -53,10 +53,7 @@ export class SportsPlayerService {
     return ids.filter((id) => !setRegisters.has(id));
   }
 
-  async getAllSportsPlayer(
-    id: number,
-    sportIds?: number[],
-  ): Promise<SportsPlayerEntity[]> {
+  async getAllSportsPlayer(id: number, sportIds?: number[]): Promise<any> {
     return this.prisma.handleDbOperation(
       this.prisma.sportPlayer.findMany({
         where: {

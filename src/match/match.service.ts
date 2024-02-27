@@ -9,65 +9,65 @@ import { match } from './entities/match.entity';
 
 @Injectable()
 export class MatchService {
+  constructor(
+    private prisma: PrismaService,
+    private gamemode: GameModeService,
+    private sportfield: SportFieldService,
+    private sport: SportService,
+  ) {}
 
-    constructor(
-        private prisma: PrismaService, 
-        private gamemode: GameModeService,
-        private sportfield: SportFieldService,
-        private sport: SportService) {}
+  getMatches(): Promise<match[]> {
+    return this.prisma.handleDbOperation(
+      this.prisma.match.findMany({
+        select: {
+          matchId: true,
+          matchDate: true,
+          matchTime: true,
+          matchDistrict: true,
+          matchRegistrationDate: true,
+          stateField: true,
+          Sport: {
+            select: {
+              sportName: true,
+            },
+          },
+          GameMode: {
+            select: {
+              gameModeName: true,
+            },
+          },
+          SportField: {
+            select: {
+              sportFieldName: true,
+            },
+          },
+        },
+      }),
+    );
+  }
 
-        getMatches(): Promise<match[]> {
-            return this.prisma.handleDbOperation(this.prisma.match.findMany(
-                {
-                    select: {
-                        matchId: true,
-                        matchDate: true,
-                        matchTime: true,
-                        matchDistrict: true,
-                        matchRegistrationDate: true,
-                        stateField: true,
-                        Sport: {
-                            select: {
-                                SportName: true
-                            }
-                        },
-                        GameMode: {
-                            select: {
-                                GameModeName: true
-                            }
-                        },
-                        SportField: {
-                            select: {
-                                sportFieldName: true
-                            }
-                        }
-                    }
-                }
-            ));
-        }
-
-    async getMatchById(id: number): Promise<Match> {
-        const match = await this.prisma.handleDbOperation(
-            this.prisma.match.findUnique({
-                where: {
-                    matchId: id,
-                },
-            }),
-        );
-        if (!match) {
-            throw new NotFoundException(`Match with id ${id} not found`);
-        }
-        return match;
+  async getMatchById(id: number): Promise<Match> {
+    const match = await this.prisma.handleDbOperation(
+      this.prisma.match.findUnique({
+        where: {
+          matchId: id,
+        },
+      }),
+    );
+    if (!match) {
+      throw new NotFoundException(`Match with id ${id} not found`);
     }
+    return match;
+  }
 
-    async createMatch(data: CreateMatchDto): Promise<Match> {
-        await this.sport.getSportById(data.SportId);
-        await this.gamemode.getGameModeById(data.GameModeId);
-        await this.sportfield.getSportFieldById(data.SportFieldId);
-        const matchCreated = await this.prisma.handleDbOperation(
-            this.prisma.match.create({
-                data
-            }));
-        return matchCreated;
-    }
+  async createMatch(data: CreateMatchDto): Promise<Match> {
+    await this.sport.getSportById(data.sportId);
+    await this.gamemode.getGameModeById(data.gameModeId);
+    await this.sportfield.getSportFieldById(data.sportFieldId);
+    return this.prisma.handleDbOperation(
+      this.prisma.match.create({
+        data,
+      }),
+    );
+  }
 }

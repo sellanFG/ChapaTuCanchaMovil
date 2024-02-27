@@ -1,38 +1,36 @@
-import {ApiProperty} from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger';
 
 export class match {
-    @ApiProperty()
-    matchId: number;
+  @ApiProperty()
+  matchId: number;
 
-    @ApiProperty()
-    matchDate: Date;
+  @ApiProperty()
+  matchDate: Date;
 
-    @ApiProperty()
-    matchTime: Date;
+  @ApiProperty()
+  matchTime: Date;
 
-    @ApiProperty()
-    matchDistrict: string;
+  @ApiProperty()
+  matchDistrict: string;
 
-    @ApiProperty()
-    matchRegistrationDate: Date;
+  @ApiProperty()
+  matchRegistrationDate: Date;
 
-    @ApiProperty()
-    stateField: boolean;
+  @ApiProperty()
+  stateField: boolean;
 
-    @ApiProperty()
-    Sport: {
-        SportName: string;
-    }
+  @ApiProperty()
+  Sport: {
+    sportName: string;
+  };
 
-    @ApiProperty()
-    GameMode: {
-        GameModeName: string;
-      };
+  @ApiProperty()
+  GameMode: {
+    gameModeName: string;
+  };
 
-    @ApiProperty()
-    SportField: {
-        sportFieldName: string;
-      };
-    
-
+  @ApiProperty()
+  SportField: {
+    sportFieldName: string;
+  };
 }

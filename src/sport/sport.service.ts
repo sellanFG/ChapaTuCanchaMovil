@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Sport } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+
 @Injectable()
 export class SportService {
   constructor(private prisma: PrismaService) {}
@@ -9,7 +10,7 @@ export class SportService {
     const sport = await this.prisma.handleDbOperation(
       this.prisma.sport.findUnique({
         where: {
-          SportId: id,
+          sportId: id,
         },
       }),
     );
@@ -25,14 +26,14 @@ export class SportService {
     const foundSports = await this.prisma.handleDbOperation(
       this.prisma.sport.findMany({
         where: {
-          SportId: {
+          sportId: {
             in: ids,
           },
         },
       }),
     );
 
-    const foundIds = new Set(foundSports.map((sport) => sport.SportId));
+    const foundIds = new Set(foundSports.map((sport) => sport.sportId));
     const badIds = ids.filter((id) => !foundIds.has(id));
     if (badIds.length != 0) {
       throw new NotFoundException(`Invalid ids: ${badIds.join(', ')}`);

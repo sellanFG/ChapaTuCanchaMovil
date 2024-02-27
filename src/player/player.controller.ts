@@ -3,13 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { player } from '@prisma/client';
 import { CreatePlayerDto, UpdatePlayerDto } from './dto';
 import { PlayerService } from './player.service';
 

@@ -16,7 +16,7 @@ export class QuestionsTemplateService {
     return this.prisma.handleDbOperation(
       this.prisma.questionsTemplate.findMany({
         where: {
-          SportId: sportId,
+          sportId: sportId,
         },
       }),
     );

@@ -37,7 +37,7 @@ export class SportsPlayerService {
     const registers = await this.prisma.handleDbOperation(
       this.prisma.sportPlayer.findMany({
         where: {
-          SportId: {
+          sportId: {
             in: ids,
           },
         },
@@ -59,16 +59,16 @@ export class SportsPlayerService {
         where: {
           playerId: id,
           status: true,
-          SportId: {
+          sportId: {
             in: sportIds,
           },
         },
         include: {
-          sport: {
+          Sport: {
             select: {
-              SportName: true,
-              SportDescription: true,
-              SportImage: true,
+              sportName: true,
+              sportDescription: true,
+              sportImage: true,
             },
           },
         },
@@ -84,7 +84,7 @@ export class SportsPlayerService {
       this.prisma.sportPlayer.updateMany({
         where: {
           playerId: playerId,
-          SportId: {
+          sportId: {
             in: sportIds,
           },
         },
@@ -99,9 +99,9 @@ export class SportsPlayerService {
     await this.prisma.handleDbOperation(
       this.prisma.sportPlayer.update({
         where: {
-          SportId_playerId: {
+          sportId_playerId: {
             playerId: id,
-            SportId: sportId,
+            sportId: sportId,
           },
         },
         data: {

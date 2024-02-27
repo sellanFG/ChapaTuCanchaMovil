@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { members } from '@prisma/client';
+import { Members } from '@prisma/client';
 import { PlayerService } from 'src/player/player.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TeamService } from 'src/team/team.service';
@@ -13,7 +13,7 @@ export class MembersService {
     private team: TeamService,
   ) {}
 
-  async getMembersByTeam(teamId: number): Promise<members[]> {
+  async getMembersByTeam(teamId: number): Promise<Members[]> {
     return this.prisma.handleDbOperation(
       this.prisma.members.findMany({
         where: {
@@ -24,7 +24,7 @@ export class MembersService {
   }
 
   async getMemberInfo(playerId: number, teamId: number): Promise<any> {
-    const player = await this.player.getPlayerInfo(playerId);
+    // const player = await this.player.getPlayerInfo(playerId);
     return this.prisma.handleDbOperation(
       this.prisma.members.findUnique({
         where: {
@@ -34,7 +34,7 @@ export class MembersService {
           },
         },
         select: {
-          player,
+          Player: true,
           memberRole: true,
           memberRegistrationDate: true,
         },

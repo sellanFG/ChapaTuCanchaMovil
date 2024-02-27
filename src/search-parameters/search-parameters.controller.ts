@@ -1,36 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Param } from '@nestjs/common';
 import { SearchParametersService } from './search-parameters.service';
 import { CreateSearchParameterDto } from './dto/create-search-parameter.dto';
-import { UpdateSearchParameterDto } from './dto/update-search-parameter.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { SearchParameters } from '@prisma/client';
+import { SearchParametersEntity } from './entities/search-parameter.entity';
 
 @ApiTags('search-parameters')
 @Controller('search-parameters')
 export class SearchParametersController {
-  constructor(private readonly searchParametersService: SearchParametersService) {}
+  constructor(
+    private readonly searchParametersService: SearchParametersService,
+  ) {}
 
   @Post()
-  create(@Body() createSearchParameterDto: CreateSearchParameterDto) {
+  @ApiCreatedResponse({ type: SearchParametersEntity })
+  create(
+    @Body() createSearchParameterDto: CreateSearchParameterDto,
+  ): Promise<SearchParameters> {
     return this.searchParametersService.create(createSearchParameterDto);
   }
 
-  @Get()
-  findAll() {
-    return this.searchParametersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.searchParametersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSearchParameterDto: UpdateSearchParameterDto) {
-    return this.searchParametersService.update(+id, updateSearchParameterDto);
-  }
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.searchParametersService.remove(+id);
+  @ApiCreatedResponse({ type: SearchParametersEntity })
+  delete(@Param('id') id: number): Promise<SearchParameters> {
+    return this.searchParametersService.delete(id);
   }
 }

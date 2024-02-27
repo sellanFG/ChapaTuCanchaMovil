@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class TemplateQuestions {
+export class QuestionsTemplate {
   @ApiProperty()
-  questionId: number;
+  questionsTemplateId: number;
 
   @ApiProperty()
-  question: string;
+  Question: string;
 
   @ApiProperty()
-  sportId: number;
+  SportId: number;
 }

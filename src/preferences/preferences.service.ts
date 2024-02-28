@@ -1,62 +1,96 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePreferenceDto } from './dto/createPreferenceDto.dto';
-import { preferences } from '@prisma/client';
 
 @Injectable()
 export class PreferencesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreatePreferenceDto): Promise<preferences> {
-    return this.prisma.handleDbOperation(
+  async create(data: CreatePreferenceDto): Promise<NonNullable<unknown>> {
+    const { playerId, sportId, answerId } = data;
+    await this.prisma.handleDbOperation(
       this.prisma.preferences.create({
         data,
       }),
     );
+    return this.getPreferences(playerId, sportId, answerId);
   }
 
-  async getPreferences(playerId: number): Promise<NonNullable<unknown>> {
+  async getPreferences(
+    playerId: number,
+    sportId?: number,
+    answerId?: number,
+  ): Promise<NonNullable<unknown>> {
     const answers = await this.prisma.handleDbOperation(
       this.prisma.preferences.findMany({
         where: {
           playerId,
-          sportPlayer: {
+          sportId,
+          answerId,
+          SportPlayer: {
             status: true,
           },
         },
         include: {
-          answer: {
+          Answer: {
             include: {
-              question: true,
+              Question: true,
             },
           },
-          sportPlayer: {
+          SportPlayer: {
             include: {
-              sport: true,
+              Sport: true,
             },
           },
         },
       }),
     );
+    return this.buildPreferencesModel(answers);
+  }
 
+  private buildPreferencesModel(answers: any): NonNullable<unknown> {
     const preferences = {};
     answers.forEach((answer) => {
-      const sportName = answer.sportPlayer.sport.SportName;
+      const sportName = answer.SportPlayer.Sport.sportName;
       if (!preferences[sportName]) {
         preferences[sportName] = {
-          sportId: answer.SportId,
-          sportImage: answer.sportPlayer.sport.SportImage,
+          sportId: answer.sportId,
+          sportImage: answer.SportPlayer.Sport.sportImage,
           preferences: [],
         };
       }
 
       preferences[sportName]['preferences'].push({
-        questionId: answer.answer.questionsTemplateId,
-        question: answer.answer.question.Question,
+        questionId: answer.Answer.questionsTemplateId,
+        question: answer.Answer.Question.question,
         answerId: answer.answerId,
-        answer: answer.answer.answer,
+        answer: answer.Answer.answer,
       });
     });
     return preferences;
+  }
+
+  async delete(
+    playerId: number,
+    sportId: number,
+    answerId: number,
+  ): Promise<NonNullable<unknown>> {
+    const deletePreference = await this.getPreferences(
+      playerId,
+      sportId,
+      answerId,
+    );
+    await this.prisma.handleDbOperation(
+      this.prisma.preferences.delete({
+        where: {
+          playerId_sportId_answerId: {
+            playerId,
+            sportId,
+            answerId,
+          },
+        },
+      }),
+    );
+    return deletePreference;
   }
 }

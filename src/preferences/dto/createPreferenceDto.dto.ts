@@ -10,10 +10,10 @@ export class CreatePreferenceDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  SportId: number;
+  answerId: number;
 
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  answerId: number;
+  sportId: number;
 }

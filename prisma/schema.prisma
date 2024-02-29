@@ -34,7 +34,7 @@ model GameMode {
   Sport               Sport              @relation(fields: [sportId], references: [sportId])
   sportId             Int
   SearchParameters    SearchParameters[]
-  Match               Match?
+  Match               Match[]
 }
 
 model SportField {

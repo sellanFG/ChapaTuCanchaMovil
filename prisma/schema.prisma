@@ -165,8 +165,8 @@ model TeamMatch {
   Match     Match   @relation(fields: [matchId], references: [matchId])
   matchId   Int
   statusNFU Boolean @default(false)
-  Player    Player  @relation(fields: [playerId], references: [playerId])
-  playerId  Int
+  Player    Player? @relation(fields: [playerId], references: [playerId])
+  playerId  Int?
 
   @@id([teamId, matchId])
 }

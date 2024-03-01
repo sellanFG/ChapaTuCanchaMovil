@@ -20,7 +20,7 @@ model Sport {
   sportDescription  String              @db.VarChar(255)
   sportImage        String              @db.VarChar(255)
   GameMode          GameMode[]
-  Match             Match?
+  Match             Match[]
   QuestionsTemplate QuestionsTemplate[]
   SearchParameters  SearchParameters[]
   Team              Team[]
@@ -52,9 +52,9 @@ model Match {
   matchRegistrationDate DateTime       @db.Timestamptz()
   stateField            Boolean        @default(false)
   Sport                 Sport          @relation(fields: [sportId], references: [sportId])
-  sportId               Int            @unique
+  sportId               Int
   GameMode              GameMode       @relation(fields: [gameModeId], references: [gameModeId])
-  gameModeId            Int            @unique
+  gameModeId            Int
   SportField            SportField     @relation(fields: [sportFieldId], references: [sportFieldId])
   sportFieldId          Int
   TeamMatch             TeamMatch[]

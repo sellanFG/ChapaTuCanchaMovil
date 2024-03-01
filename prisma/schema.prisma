@@ -77,7 +77,7 @@ model Player {
   playerAvailability     Boolean       @default(false)
   playerSubscription     Boolean       @default(false)
   playerSearchStatus     Boolean       @default(false)
-  TeamMatch              TeamMatch?
+  TeamMatch              TeamMatch[]
   SportPlayer            SportPlayer[]
   Members                Members[]
 }
@@ -166,7 +166,7 @@ model TeamMatch {
   matchId   Int
   statusNFU Boolean @default(false)
   Player    Player  @relation(fields: [playerId], references: [playerId])
-  playerId  Int     @unique
+  playerId  Int
 
   @@id([teamId, matchId])
 }

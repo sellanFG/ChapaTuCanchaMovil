@@ -4,11 +4,13 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreatePlayerDto, UpdatePlayerDto } from './dto';
+import { UpdatePlayerAvailabilityDto } from './dto/update-player-availability.dto';
 import { PlayerService } from './player.service';
 
 @ApiTags('player')
@@ -44,5 +46,13 @@ export class PlayerController {
   @Get('info/:id')
   async getPlayerInfo(@Param('id') id: number) {
     return this.playerService.getPlayerInfo(id);
+  }
+
+  @Patch(':id')
+  updatePlayerAvailability(
+    @Param('id') id: number,
+    @Body() data: UpdatePlayerAvailabilityDto,
+  ) {
+    return this.playerService.updatePlayerAvailability(id, data);
   }
 }

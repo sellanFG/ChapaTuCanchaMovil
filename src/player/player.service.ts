@@ -4,12 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Player } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { MembersMatchService } from '../members-match/members-match.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlayerDto, UpdatePlayerDto } from './dto';
+import { UpdatePlayerAvailabilityDto } from './dto/update-player-availability.dto';
 
 @Injectable()
 export class PlayerService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    public membersMatchService: MembersMatchService,
+  ) {}
 
   async getPlayers(): Promise<Player[]> {
     return await this.prisma.handleDbOperation(this.prisma.player.findMany());
@@ -77,6 +82,30 @@ export class PlayerService {
           playerLastName: true,
           playerPhoneNumber: true,
         },
+      }),
+    );
+  }
+
+  async getAllPlayerInfo(ids: number[]): Promise<Player[]> {
+    return this.prisma.player.findMany({
+      where: {
+        playerId: {
+          in: ids,
+        },
+      },
+    });
+  }
+
+  updatePlayerAvailability(
+    playerId: number,
+    data: UpdatePlayerAvailabilityDto,
+  ): Promise<Player> {
+    return this.prisma.handleDbOperation(
+      this.prisma.player.update({
+        where: {
+          playerId: playerId,
+        },
+        data,
       }),
     );
   }

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Match } from '@prisma/client';
 import { MembersMatchEntity } from '../members-match/entities/members-match.entity';
 import { MembersMatchService } from '../members-match/members-match.service';
 import { PlayerService } from '../player/player.service';
@@ -7,7 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { TeamMatchEntity } from '../team-match/entities/team-match.entity';
 import { TeamMatchService } from '../team-match/team-match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { MatchEntityPost } from './entities/swagger/match-create.entity';
+import { GetMatch } from './entities/swagger/getMatch.entity';
+import { PostMatch } from './entities/swagger/postMatch';
 
 @Injectable()
 export class MatchService {
@@ -18,7 +18,7 @@ export class MatchService {
     private memberMatchService: MembersMatchService,
   ) {}
 
-  getMatches(): Promise<match[]> {
+  getMatches(): Promise<GetMatch[]> {
     return this.prisma.handleDbOperation(
       this.prisma.match.findMany({
         select: {
@@ -30,16 +30,20 @@ export class MatchService {
           stateField: true,
           Sport: {
             select: {
+              sportId: true,
+              sportImage: true,
               sportName: true,
             },
           },
           GameMode: {
             select: {
+              gameModeId: true,
               gameModeName: true,
             },
           },
           SportField: {
             select: {
+              sportFieldId: true,
               sportFieldName: true,
             },
           },
@@ -48,11 +52,38 @@ export class MatchService {
     );
   }
 
-  async getMatchById(id: number): Promise<Match> {
+  async getMatchById(id: number): Promise<GetMatch> {
     const match = await this.prisma.handleDbOperation(
       this.prisma.match.findUnique({
         where: {
           matchId: id,
+        },
+        select: {
+          matchId: true,
+          matchDate: true,
+          matchTime: true,
+          matchDistrict: true,
+          matchRegistrationDate: true,
+          stateField: true,
+          Sport: {
+            select: {
+              sportId: true,
+              sportImage: true,
+              sportName: true,
+            },
+          },
+          GameMode: {
+            select: {
+              gameModeId: true,
+              gameModeName: true,
+            },
+          },
+          SportField: {
+            select: {
+              sportFieldId: true,
+              sportFieldName: true,
+            },
+          },
         },
       }),
     );
@@ -63,7 +94,7 @@ export class MatchService {
   }
 
   //Interactive transaction
-  async create(data: CreateMatchDto): Promise<MatchEntityPost> {
+  async create(data: CreateMatchDto): Promise<PostMatch> {
     try {
       const { teamId1, teamId2, usersId1, usersId2 } = data;
       const playersId = usersId1.concat(usersId2);

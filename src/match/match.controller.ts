@@ -5,10 +5,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { Match } from '@prisma/client';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { MatchEntity } from './entities/match.entity';
-import { MatchEntityPost } from './entities/swagger/match-create.entity';
+import { GetMatch } from './entities/swagger/getMatch.entity';
+import { PostMatch } from './entities/swagger/postMatch';
 import { MatchService } from './match.service';
 @ApiTags('match')
 @Controller('match')
@@ -16,21 +15,21 @@ export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
   @Get()
-  @ApiOkResponse({ type: [match] })
-  getMatches(): Promise<match[]> {
+  @ApiOkResponse({ type: [GetMatch] })
+  getMatches(): Promise<GetMatch[]> {
     return this.matchService.getMatches();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: match })
+  @ApiOkResponse({ type: GetMatch })
   @ApiParam({ name: 'id', description: 'Match id', type: 'number' })
-  getMatchById(id: number): Promise<Match> {
+  getMatchById(id: number): Promise<GetMatch> {
     return this.matchService.getMatchById(id);
   }
 
   @Post()
-  @ApiCreatedResponse({ type: MatchEntityPost })
-  createMatch(@Body() data: CreateMatchDto): Promise<MatchEntityPost> {
+  @ApiCreatedResponse({ type: PostMatch })
+  createMatch(@Body() data: CreateMatchDto): Promise<PostMatch> {
     return this.matchService.create(data);
   }
 }

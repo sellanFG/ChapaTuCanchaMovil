@@ -1,36 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { CreateMatchDto } from '../dto/create-match.dto';
 
-export class match {
-  @ApiProperty()
+export class MatchEntity {
+  constructor(matchId: number, data: CreateMatchDto) {
+    this.matchId = matchId;
+    this.matchDate = data.matchDate;
+    this.matchTime = data.matchTime;
+    this.matchDistrict = data.matchDistrict;
+    this.matchRegistrationDate = data.matchRegistrationDate;
+    this.stateField = data.stateField;
+    this.sportId = data.sportId;
+    this.gameModeId = data.gameModeId;
+    this.sportFieldId = data.sportFieldId;
+  }
   matchId: number;
-
-  @ApiProperty()
   matchDate: Date;
-
-  @ApiProperty()
   matchTime: Date;
-
-  @ApiProperty()
   matchDistrict: string;
-
-  @ApiProperty()
   matchRegistrationDate: Date;
-
-  @ApiProperty()
   stateField: boolean;
-
-  @ApiProperty()
-  Sport: {
-    sportName: string;
-  };
-
-  @ApiProperty()
-  GameMode: {
-    gameModeName: string;
-  };
-
-  @ApiProperty()
-  SportField: {
-    sportFieldName: string;
-  };
+  sportId: number;
+  gameModeId: number;
+  sportFieldId: number;
 }

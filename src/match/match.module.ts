@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { MatchService } from './match.service';
-import { MatchController } from './match.controller';
+import { MembersMatchModule } from 'src/members-match/members-match.module';
+import { PlayerModule } from 'src/player/player.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { GameModeModule } from 'src/game-mode/game-mode.module';
-import { SportFieldModule } from 'src/sport-field/sport-field.module';
-import { SportModule } from 'src/sport/sport.module';
+import { TeamMatchModule } from 'src/team-match/team-match.module';
+import { MatchController } from './match.controller';
+import { MatchService } from './match.service';
 
 @Module({
   controllers: [MatchController],
-  providers: [MatchService,],
-  imports: [PrismaModule,GameModeModule,SportFieldModule,SportModule],
-  exports: [MatchService]
+  providers: [MatchService],
+  imports: [PrismaModule, MembersMatchModule, TeamMatchModule, PlayerModule],
+  exports: [MatchService],
 })
 export class MatchModule {}

@@ -1,19 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Match } from '@prisma/client';
-import { GameModeService } from 'src/game-mode/game-mode.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { SportFieldService } from 'src/sport-field/sport-field.service';
+import { MembersMatchEntity } from '../members-match/entities/members-match.entity';
+import { MembersMatchService } from '../members-match/members-match.service';
+import { PlayerService } from '../player/player.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { TeamMatchEntity } from '../team-match/entities/team-match.entity';
+import { TeamMatchService } from '../team-match/team-match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { SportService } from 'src/sport/sport.service';
-import { match } from './entities/match.entity';
+import { MatchEntityPost } from './entities/swagger/match-create.entity';
 
 @Injectable()
 export class MatchService {
   constructor(
     private prisma: PrismaService,
-    private gamemode: GameModeService,
-    private sportfield: SportFieldService,
-    private sport: SportService,
+    private teamMatchService: TeamMatchService,
+    private playerService: PlayerService,
+    private memberMatchService: MembersMatchService,
   ) {}
 
   getMatches(): Promise<match[]> {
@@ -60,14 +62,149 @@ export class MatchService {
     return match;
   }
 
-  async createMatch(data: CreateMatchDto): Promise<Match> {
-    await this.sport.getSportById(data.sportId);
-    await this.gamemode.getGameModeById(data.gameModeId);
-    await this.sportfield.getSportFieldById(data.sportFieldId);
-    return this.prisma.handleDbOperation(
-      this.prisma.match.create({
-        data,
-      }),
+  //Interactive transaction
+  async create(data: CreateMatchDto): Promise<MatchEntityPost> {
+    try {
+      const { teamId1, teamId2, usersId1, usersId2 } = data;
+      const playersId = usersId1.concat(usersId2);
+
+      return this.prisma.$transaction(async (tx) => {
+        const match = await tx.match.create({
+          data,
+        });
+        const matchId = match.matchId;
+
+        //Create team match
+        const teamsMatch = await this.createTeamsMatch(
+          teamId1,
+          teamId2,
+          matchId,
+        );
+        const createTeamMatch = await tx.teamMatch.createMany({
+          data: teamsMatch,
+        });
+
+        if (createTeamMatch.count != 2) {
+          throw new Error('Error creating team match');
+        }
+
+        //Create members match
+        const membersMatch = await this.createMembersMatch(
+          teamId1,
+          teamId2,
+          usersId1,
+          usersId2,
+          matchId,
+        );
+
+        const createMembersMatch = await tx.membersMatch.createMany({
+          data: membersMatch,
+        });
+
+        if (createMembersMatch.count != membersMatch.length) {
+          throw new Error('Error creating members match');
+        }
+
+        //update availability if the player is not subscribed
+        const playersNotSubscribIds = await this.playersNotSubscrib(playersId);
+        const updateAvailability = await tx.player.updateMany({
+          where: {
+            playerId: {
+              in: playersNotSubscribIds,
+            },
+          },
+          data: {
+            playerAvailability: false,
+          },
+        });
+        if (updateAvailability.count != playersNotSubscribIds.length) {
+          throw new Error('Error updating availability');
+        }
+
+        return this.getMatchResponseModel(matchId, playersNotSubscribIds);
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  private async createTeamsMatch(
+    teamId1: number,
+    teamId2: number,
+    matchId: number,
+  ) {
+    const teamsMatch: TeamMatchEntity[] = [];
+    teamsMatch.push(new TeamMatchEntity(teamId1, matchId));
+    teamsMatch.push(new TeamMatchEntity(teamId2, matchId));
+
+    return teamsMatch;
+  }
+
+  private async createMembersMatch(
+    teamId1: number,
+    teamId2: number,
+    usersId1: number[],
+    usersId2: number[],
+    matchId: number,
+  ) {
+    const membersMatch: MembersMatchEntity[] = [];
+    for (const user of usersId1) {
+      membersMatch.push(new MembersMatchEntity(user, teamId1, matchId));
+    }
+    for (const user of usersId2) {
+      membersMatch.push(new MembersMatchEntity(user, teamId2, matchId));
+    }
+    return membersMatch;
+  }
+
+  private async getMatchResponseModel(
+    matchId: number,
+    playersNotSubscribIds: number[],
+  ) {
+    const infoMatch = await this.getInfoMatchById(matchId);
+    const teams = await this.teamMatchService.getAllTeamMatchByMatchId(matchId);
+
+    if (playersNotSubscribIds.length == 0) {
+      return { infoMatch, teams, playersNotSubscribIds, endTime: null };
+    }
+    const endTime = await this.memberMatchService.getEndTimeA(
+      playersNotSubscribIds[0],
     );
+    return { infoMatch, teams, playersNotSubscribIds, endTime };
+  }
+
+  private async playersNotSubscrib(usersId: number[]): Promise<number[]> {
+    const playersInfo = await this.playerService.getAllPlayerInfo(usersId);
+
+    return playersInfo
+      .filter((p) => !p.playerSubscription)
+      .map((p) => p.playerId);
+  }
+
+  private getInfoMatchById(matchId: number) {
+    return this.prisma.match.findUnique({
+      where: {
+        matchId,
+      },
+      select: {
+        matchId: true,
+        matchDate: true,
+        matchTime: true,
+        matchDistrict: true,
+        Sport: {
+          select: {
+            sportId: true,
+            sportName: true,
+            sportImage: true,
+          },
+        },
+        GameMode: {
+          select: {
+            gameModeId: true,
+            gameModeName: true,
+          },
+        },
+      },
+    });
   }
 }

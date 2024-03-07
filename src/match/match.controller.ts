@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { MatchService } from './match.service';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { match } from './entities/match.entity';
 import { Match } from '@prisma/client';
 import { CreateMatchDto } from './dto/create-match.dto';
-
+import { MatchEntity } from './entities/match.entity';
+import { MatchEntityPost } from './entities/swagger/match-create.entity';
+import { MatchService } from './match.service';
 @ApiTags('match')
 @Controller('match')
 export class MatchController {
@@ -29,8 +29,8 @@ export class MatchController {
   }
 
   @Post()
-  @ApiCreatedResponse({ type: match })
-  createMatch(@Body() data: CreateMatchDto): Promise<Match> {
-    return this.matchService.createMatch(data);
+  @ApiCreatedResponse({ type: MatchEntityPost })
+  createMatch(@Body() data: CreateMatchDto): Promise<MatchEntityPost> {
+    return this.matchService.create(data);
   }
 }

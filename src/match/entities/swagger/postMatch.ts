@@ -28,7 +28,7 @@ const teams: Record<string, any>[] = [
   },
 ];
 
-export class MatchEntityPost {
+export class PostMatch {
   @ApiProperty({ enum: [infoMatch] })
   infoMatch: Record<string, any>;
   @ApiProperty({ enum: [teams] })

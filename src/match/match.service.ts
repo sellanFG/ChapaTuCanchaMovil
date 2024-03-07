@@ -7,7 +7,7 @@ import { TeamMatchEntity } from '../team-match/entities/team-match.entity';
 import { TeamMatchService } from '../team-match/team-match.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { GetMatch } from './entities/swagger/getMatch.entity';
-import { PostMatch } from './entities/swagger/postMatch';
+import { PostMatch } from './entities/swagger/postMatch.entity';
 
 @Injectable()
 export class MatchService {

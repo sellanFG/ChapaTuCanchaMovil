@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { GetMatch } from './entities/swagger/getMatch.entity';
-import { PostMatch } from './entities/swagger/postMatch';
+import { PostMatch } from './entities/swagger/postMatch.entity';
 import { MatchService } from './match.service';
 @ApiTags('match')
 @Controller('match')

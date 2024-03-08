@@ -10,7 +10,10 @@ export class TeamMatchController {
   constructor(private readonly teamMatchService: TeamMatchService) {}
 
   @Get(':id')
-  @ApiOkResponse({ type: [GetTeamMatch] })
+  @ApiOkResponse({
+    type: [GetTeamMatch],
+    description: 'Return the players into "nos falta uno" category',
+  })
   getInfoNosFaltaUno(@Param('id') matchId: number): Promise<TeamMatch[]> {
     return this.teamMatchService.getNosFaltaUno(matchId);
   }

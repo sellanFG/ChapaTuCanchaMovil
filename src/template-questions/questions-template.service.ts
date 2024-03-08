@@ -1,22 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QuestionsTemplate } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SportService } from 'src/sport/sport.service';
 
 @Injectable()
 export class QuestionsTemplateService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private sportService: SportService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getAllQuestionsSportId(sportId: number): Promise<QuestionsTemplate[]> {
-    await this.sportService.getSportById(sportId);
-
+  async getAll(): Promise<QuestionsTemplate[]> {
     return this.prisma.handleDbOperation(
       this.prisma.questionsTemplate.findMany({
-        where: {
-          sportId: sportId,
+        include: {
+          Answer: {
+            select: {
+              answerId: true,
+              answer: true,
+            },
+          },
         },
       }),
     );

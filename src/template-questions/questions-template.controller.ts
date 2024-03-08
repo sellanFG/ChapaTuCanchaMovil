@@ -1,7 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { QuestionsTemplate } from '@prisma/client';
-import { QuestionsTemplate as QuestionsTemplateEntity } from './entities/template-questions.entity';
+import { GetQuestionsTemplate } from './entities/swagger/get.entity';
 import { QuestionsTemplateService } from './questions-template.service';
 
 @ApiTags('template-questions')
@@ -11,15 +11,12 @@ export class QuestionsTemplateController {
     private readonly templateQuestionsService: QuestionsTemplateService,
   ) {}
 
-  @Get(':id')
+  @Get()
   @ApiOkResponse({
-    description: 'Get all questions for a sport',
-    type: [QuestionsTemplateEntity],
+    description: 'Get all questions',
+    type: [GetQuestionsTemplate],
   })
-  @ApiParam({ name: 'id', description: 'Sport id', type: 'number' })
-  async getAllQuestionsSportId(
-    @Param('id') id: number,
-  ): Promise<QuestionsTemplate[]> {
-    return this.templateQuestionsService.getAllQuestionsSportId(id);
+  async getAllQuestionsSportId(): Promise<QuestionsTemplate[]> {
+    return this.templateQuestionsService.getAll();
   }
 }

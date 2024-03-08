@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Sport } from './entities/sport.entity';
+import { GetSport } from './entities/swagger/getSport.entity';
 import { SportService } from './sport.service';
 
 @ApiTags('sport')
@@ -9,13 +9,13 @@ export class SportController {
   constructor(private readonly sportService: SportService) {}
 
   @Get()
-  @ApiOkResponse({ type: [Sport] })
+  @ApiOkResponse({ type: [GetSport] })
   getSports() {
     return this.sportService.getSports();
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: [Sport] })
+  @ApiOkResponse({ type: GetSport })
   @ApiParam({ name: 'id', description: 'Sport id', type: 'number' })
   getSportById(id: number) {
     return this.sportService.getSportById(id);

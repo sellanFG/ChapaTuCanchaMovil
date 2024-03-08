@@ -1,52 +1,79 @@
-import { Body, Controller, Get, Post,Param, Delete, Patch } from '@nestjs/common';
-import { TeamService } from './team.service';
-import { ApiOkResponse, ApiParam, ApiTags,ApiCreatedResponse, ApiNoContentResponse } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Team } from '@prisma/client';
-import { team } from './entities/team.entity';
+import { SportService } from 'src/sport/sport.service';
 import { CreateTeamDto, UpdateTeamDto } from './dto';
+import { GetTeam, PostTeam } from './entities/swagger/index';
+import { TeamService } from './team.service';
 
 @ApiTags('team')
 @Controller('team')
 export class TeamController {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly sportService: SportService,
+  ) {}
 
   @Get()
-  @ApiOkResponse({type: [team]})
+  @ApiOkResponse({ type: [GetTeam] })
   getTeams(): Promise<Team[]> {
     return this.teamService.getTeams();
   }
 
   @Get(':id')
-  @ApiOkResponse({type: team})
-  @ApiParam({name: 'id', description: 'Team id', type: 'number'})
-  getTeamById(id: number): Promise<Team> {
+  @ApiOkResponse({ type: GetTeam })
+  @ApiParam({ name: 'id', description: 'Team id', type: 'number' })
+  getTeamById(@Param('id') id: number): Promise<Team> {
     return this.teamService.getTeamById(id);
   }
 
   @Get('sport/:id')
-  @ApiOkResponse({type: [team]})
-  @ApiParam({name: 'id', description: 'Sport id', type: 'number'})
-  getTeamsBySport(id: number): Promise<Team[]> {
+  @ApiOkResponse({ type: [GetTeam] })
+  @ApiParam({ name: 'id', description: 'Sport id', type: 'number' })
+  async getTeamsBySport(id: number): Promise<Team[]> {
+    await this.sportService.getSportById(id);
     return this.teamService.getTeamsBySport(id);
   }
 
   @Post()
-  @ApiCreatedResponse({type: team})
-  createTeam(@Body() data: CreateTeamDto): Promise<Team> {
-    return this.teamService.createTeam(data);
+  @ApiCreatedResponse({ type: PostTeam })
+  async create(@Body() data: CreateTeamDto): Promise<Team> {
+    await this.sportService.getSportById(data.sportId);
+    return this.teamService.create(data);
   }
 
   @Patch(':id')
-  @ApiOkResponse({description: 'Team updated successfully'})
-  @ApiParam({name: 'id', description: 'Team id', type: 'number'})
-  updateTeam(@Body() data: UpdateTeamDto, @Param('id') id: number): Promise<Team> {
+  @ApiOkResponse({ description: 'Team updated successfully' })
+  @ApiParam({ name: 'id', description: 'Team id', type: 'number' })
+  updateTeam(
+    @Body() data: UpdateTeamDto,
+    @Param('id') id: number,
+  ): Promise<Team> {
     return this.teamService.updateTeam(id, data);
   }
 
   @Delete(':id')
-  @ApiNoContentResponse({description: 'Team deleted successfully'})
-  @ApiParam({name: 'id', description: 'Team id', type: 'number'})
-  deleteTeam(@Param('id') id: number): Promise<Team> {
-    return this.teamService.deleteTeam(id);
+  @HttpCode(204)
+  @ApiNoContentResponse({
+    description: 'Team deleted successfully',
+  })
+  @ApiParam({ name: 'id', description: 'Team id', type: 'number' })
+  async deleteTeam(@Param('id') id: number) {
+    await this.teamService.deleteTeam(id);
   }
 }

@@ -1,18 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { SportService } from 'src/sport/sport.service';
-import { CreateTeamDto, UpdateTeamDto } from './dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Team } from '@prisma/client';
+import { triggerAsyncId } from 'async_hooks';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { MembersEntity } from '../members/entities/members.entity';
+import { CreateTeamDto, UpdateTeamDto } from './dto';
+import { TeamEntity } from './entities/team.entity';
 
 @Injectable()
 export class TeamService {
-  constructor(
-    private prisma: PrismaService,
-    private sport: SportService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   getTeams() {
-    return this.prisma.handleDbOperation(this.prisma.team.findMany());
+    return this.prisma.handleDbOperation(
+      this.prisma.team.findMany({
+        include: {
+          Sport: true,
+        },
+      }),
+    );
   }
 
   getTeamById(id: number) {
@@ -26,40 +31,74 @@ export class TeamService {
   }
 
   async getTeamsBySport(sportId: number) {
-    await this.sport.getSportById(sportId);
     return this.prisma.handleDbOperation(
       this.prisma.team.findMany({
         where: {
           sportId: sportId,
         },
+        include: {
+          Sport: true,
+        },
       }),
     );
   }
+  async create(data: CreateTeamDto): Promise<Team> {
+    const teamData = new TeamEntity(
+      data.teamName,
+      data.teamLogo,
+      data.teamSearchStatus,
+      data.sportId,
+      data.teamRegistrationDate,
+    );
+    const membersData = new MembersEntity(
+      data.playerId,
+      'P',
+      data.teamRegistrationDate,
+    );
 
-  async createTeam(data: CreateTeamDto): Promise<Team> {
-    await this.sport.getSportById(data.sportId);
-    return this.prisma.handleDbOperation(this.prisma.team.create({ data }));
+    return this.prisma.team.create({
+      data: {
+        ...teamData,
+        Members: {
+          create: membersData,
+        },
+      },
+      include: {
+        Sport: true,
+      },
+    });
   }
 
   async updateTeam(id: number, data: UpdateTeamDto): Promise<Team> {
-    await this.sport.getSportById(data.sportId);
     return this.prisma.handleDbOperation(
       this.prisma.team.update({
         where: {
           teamId: id,
         },
         data,
+        include: {
+          Sport: true,
+        },
       }),
     );
   }
 
-  deleteTeam(id: number) {
-    return this.prisma.handleDbOperation(
-      this.prisma.team.delete({
+  async deleteTeam(id: number) {
+    try {
+      const deleteMembers = this.prisma.members.deleteMany({
         where: {
           teamId: id,
         },
-      }),
-    );
+      });
+      const deleteTeam = this.prisma.team.delete({
+        where: {
+          teamId: id,
+        },
+      });
+
+      await this.prisma.$transaction([deleteMembers, deleteTeam]);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }

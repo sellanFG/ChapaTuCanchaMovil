@@ -45,7 +45,7 @@ export class TeamController {
   @Get('sport/:id')
   @ApiOkResponse({ type: [GetTeam] })
   @ApiParam({ name: 'id', description: 'Sport id', type: 'number' })
-  async getTeamsBySport(id: number): Promise<Team[]> {
+  async getTeamsBySport(@Param('id') id: number): Promise<Team[]> {
     await this.sportService.getSportById(id);
     return this.teamService.getTeamsBySport(id);
   }

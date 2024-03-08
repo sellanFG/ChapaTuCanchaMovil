@@ -4,12 +4,18 @@ import {
   IsDate,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
 export class CreateTeamDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  playerId: number;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

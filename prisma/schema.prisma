@@ -80,6 +80,7 @@ model Player {
   TeamMatch              TeamMatch[]
   SportPlayer            SportPlayer[]
   Members                Members[]
+  Preferences            Preferences[]
 }
 
 model Team {
@@ -126,24 +127,22 @@ model Answer {
 }
 
 model SportPlayer {
-  Sport       Sport         @relation(fields: [sportId], references: [sportId])
-  sportId     Int
-  Player      Player        @relation(fields: [playerId], references: [playerId])
-  playerId    Int
-  Preferences Preferences[]
-  status      Boolean       @default(true)
+  Sport    Sport   @relation(fields: [sportId], references: [sportId])
+  sportId  Int
+  Player   Player  @relation(fields: [playerId], references: [playerId])
+  playerId Int
+  status   Boolean @default(true)
 
   @@id([sportId, playerId])
 }
 
 model Preferences {
-  SportPlayer SportPlayer @relation(fields: [playerId, sportId], references: [playerId, sportId])
-  playerId    Int
-  sportId     Int
-  Answer      Answer      @relation(fields: [answerId], references: [answerId])
-  answerId    Int
+  Player   Player @relation(fields: [playerId], references: [playerId])
+  playerId Int
+  Answer   Answer @relation(fields: [answerId], references: [answerId])
+  answerId Int
 
-  @@id([playerId, sportId, answerId])
+  @@id([playerId, answerId])
 }
 
 model Members {

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+} from 'class-validator';
 
 export class CreatePreferenceDto {
   @ApiProperty()
@@ -7,13 +13,10 @@ export class CreatePreferenceDto {
   @IsNotEmpty()
   playerId: number;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  answerId: number;
-
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  sportId: number;
+  @ApiProperty({ type: [Number] })
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @IsInt({ each: true })
+  answerIds: number[];
 }

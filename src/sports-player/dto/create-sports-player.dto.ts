@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+} from 'class-validator';
+
 export class CreateSportsPlayerDto {
   @ApiProperty({ description: 'Player id' })
   @IsNumber()
@@ -7,7 +14,9 @@ export class CreateSportsPlayerDto {
   playerId: number;
 
   @ApiProperty({ type: [Number], description: 'Array of sports IDs' })
-  @IsNotEmpty()
   @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @IsInt({ each: true })
   sportsId: number[];
 }

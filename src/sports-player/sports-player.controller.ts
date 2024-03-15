@@ -20,6 +20,7 @@ import { SportsPlayerService } from './sports-player.service';
 import { SportsPlayerEntity } from './entities/sports-player.entity';
 import { SportService } from '../sport/sport.service';
 import { PlayerService } from '../player/player.service';
+import { SportsPlayerEntitySwagger } from './entities/swagger/sport-playerSwagger.entity';
 
 @ApiTags('sports-player')
 @Controller('sports-player')
@@ -31,7 +32,7 @@ export class SportsPlayerController {
   ) {}
 
   @Post()
-  @ApiCreatedResponse({ type: [SportsPlayerEntity] })
+  @ApiCreatedResponse({ type: [SportsPlayerEntitySwagger] })
   async create(
     @Body() createSportsPlayerDto: CreateSportsPlayerDto,
   ): Promise<SportsPlayerEntity[]> {
@@ -44,7 +45,7 @@ export class SportsPlayerController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: [SportsPlayerEntity] })
+  @ApiOkResponse({ type: [SportsPlayerEntitySwagger] })
   @ApiParam({ name: 'id', description: 'Player id', type: Number })
   async getAllSportsPlayer(
     @Param('id') id: number,

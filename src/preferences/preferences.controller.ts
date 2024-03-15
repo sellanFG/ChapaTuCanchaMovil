@@ -1,11 +1,11 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { PreferencesService } from './preferences.service';
 import {
@@ -15,7 +15,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreatePreferenceDto } from './dto/createPreferenceDto.dto';
+import { CreatePreferenceDto, UpdatePreferenceDto } from './dto/index';
 import { PreferencesEntitySwagger } from './entities/swagger/preferenceSwagger.entity';
 import { PreferencesInterface } from './interfaces/preferences.interface';
 
@@ -41,13 +41,14 @@ export class PreferencesController {
     return this.preferencesService.getPreferences(playerId);
   }
 
-  @Delete(':playerId/:answerId')
+  @Put(':id')
   @HttpCode(204)
-  @ApiNoContentResponse({ description: 'Preference deleted' })
-  async delete(
-    @Param('playerId') playerId: number,
-    @Param('answerId') answerId: number,
-  ): Promise<void> {
-    await this.preferencesService.delete(playerId, answerId);
+  @ApiParam({ name: 'id', type: Number, description: 'Answer Id' })
+  @ApiNoContentResponse()
+  update(
+    @Param('id') answerId: number,
+    @Body() updatePreferenceDto: UpdatePreferenceDto,
+  ) {
+    return this.preferencesService.update(answerId, updatePreferenceDto);
   }
 }

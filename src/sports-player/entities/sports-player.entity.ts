@@ -1,22 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-enum SportType {
-  SportName = 'SportName',
-  SportDescription = 'SportDescription',
-  SportImage = 'SportImage',
+interface Sport {
+  sportName: string;
+  sportDescription: string;
+  sportImage: string;
 }
+
 export class SportsPlayerEntity {
-  @ApiProperty()
   sportId: number;
-
-  @ApiProperty()
   playerId: number;
-
-  @ApiProperty()
-  status: boolean;
-
-  @ApiProperty({
-    enumName: 'SportType',
-    enum: SportType,
-  })
-  sport: SportType;
+  Sport: Sport;
 }

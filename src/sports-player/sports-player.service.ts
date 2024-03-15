@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SportsPlayerEntity } from './entities/sports-player.entity';
 
@@ -10,55 +15,26 @@ export class SportsPlayerService {
     playerId: number,
     sportsId: number[],
   ): Promise<SportsPlayerEntity[]> {
-    //Update sports registered
-    const idsNotRegisters = await this.updateSportsRegistered(
-      playerId,
-      sportsId,
-    );
-
-    //New sports registers
-    const registers = [];
-    for (const sportId of idsNotRegisters) {
-      registers.push({ playerId: playerId, SportId: sportId });
-    }
     await this.prisma.handleDbOperation(
       this.prisma.sportPlayer.createMany({
-        data: registers,
+        data: sportsId.map((sportId) => ({
+          playerId,
+          sportId,
+        })),
       }),
     );
 
     return this.getAllSportsPlayer(playerId, sportsId);
   }
 
-  private async updateSportsRegistered(
-    playerId: number,
-    ids: number[],
-  ): Promise<number[]> {
-    const registers = await this.prisma.handleDbOperation(
-      this.prisma.sportPlayer.findMany({
-        where: {
-          sportId: {
-            in: ids,
-          },
-        },
-      }),
-    );
-    //Update sports registered
-    await this.updateMany(playerId, ids);
-
-    const registeredIds = registers.map(
-      (registered: any) => registered.SportId,
-    );
-    const setRegisters = new Set(registeredIds);
-    return ids.filter((id) => !setRegisters.has(id));
-  }
-
-  async getAllSportsPlayer(id: number, sportIds?: number[]): Promise<any> {
+  async getAllSportsPlayer(
+    id: number,
+    sportIds?: number[],
+  ): Promise<SportsPlayerEntity[]> {
     return this.prisma.handleDbOperation(
       this.prisma.sportPlayer.findMany({
         where: {
           playerId: id,
-          status: true,
           sportId: {
             in: sportIds,
           },
@@ -76,38 +52,43 @@ export class SportsPlayerService {
     );
   }
 
-  private async updateMany(
-    playerId: number,
-    sportIds: number[],
-  ): Promise<void> {
-    await this.prisma.handleDbOperation(
-      this.prisma.sportPlayer.updateMany({
-        where: {
-          playerId: playerId,
-          sportId: {
-            in: sportIds,
-          },
-        },
-        data: {
-          status: true,
-        },
-      }),
-    );
-  }
-
-  async update(id: number, sportId: number): Promise<void> {
-    await this.prisma.handleDbOperation(
-      this.prisma.sportPlayer.update({
+  async delete(playerId: number, sportId: number): Promise<void> {
+    //Verify the teams registered with the same sport
+    if (await this.someTeam(sportId, playerId)) {
+      throw new HttpException(
+        'You cannot delete the sport because at least one of your teams identifies with it',
+        HttpStatus.CONFLICT,
+      );
+    }
+    try {
+      //cascading delete: delete the sportPlayer row and player preferences
+      await this.prisma.sportPlayer.delete({
         where: {
           sportId_playerId: {
-            playerId: id,
-            sportId: sportId,
+            playerId,
+            sportId,
           },
         },
-        data: {
-          status: false,
-        },
-      }),
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error.messages);
+    }
+  }
+
+  private async someTeam(sportId: number, playerId: number): Promise<boolean> {
+    return (
+      (
+        await this.prisma.team.findMany({
+          where: {
+            sportId,
+            Members: {
+              some: {
+                playerId,
+              },
+            },
+          },
+        })
+      ).length != 0
     );
   }
 }

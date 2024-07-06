@@ -1,0 +1,6 @@
+{
+    //To enable formatting for prisma files, install the Prisma extension
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+}

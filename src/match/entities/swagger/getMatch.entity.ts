@@ -19,19 +19,19 @@ export class GetMatch {
   @ApiProperty({ type: Number })
   matchId: number;
   @ApiProperty({ type: Date })
-  matchDate: Date;
+  date: Date;
   @ApiProperty({ type: Date })
-  matchTime: Date;
+  time: Date;
   @ApiProperty({ type: String })
-  matchDistrict: string;
+  district: string;
   @ApiProperty({ type: Date })
-  matchRegistrationDate: Date;
+  registrationDate: Date;
   @ApiProperty({ type: Boolean })
   stateField: boolean;
   @ApiProperty({ enum: { sport } })
-  Sport: Record<string, any>;
+  sport: Record<string, any>;
   @ApiProperty({ enum: { gameMode } })
-  GameMode: Record<string, any>;
+  gameMode: Record<string, any>;
   @ApiProperty({ enum: { sportField } })
-  SportField: Record<string, any>;
+  sportField: Record<string, any>;
 }

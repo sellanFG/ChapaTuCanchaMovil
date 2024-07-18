@@ -9,7 +9,7 @@ import { SportsPlayerEntity } from './entities/sports-player.entity';
 
 @Injectable()
 export class SportsPlayerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(
     playerId: number,
@@ -40,11 +40,11 @@ export class SportsPlayerService {
           },
         },
         include: {
-          Sport: {
+          sport: {
             select: {
-              sportName: true,
-              sportDescription: true,
-              sportImage: true,
+              name: true,
+              description: true,
+              image: true,
             },
           },
         },
@@ -81,7 +81,7 @@ export class SportsPlayerService {
         await this.prisma.team.findMany({
           where: {
             sportId,
-            Members: {
+            members: {
               some: {
                 playerId,
               },

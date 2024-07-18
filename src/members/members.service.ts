@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Members } from '@prisma/client';
+import { Member } from '@prisma/client';
 import { PlayerService } from 'src/player/player.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TeamService } from 'src/team/team.service';
@@ -11,11 +11,11 @@ export class MembersService {
     private prisma: PrismaService,
     private player: PlayerService,
     private team: TeamService,
-  ) {}
+  ) { }
 
-  async getMembersByTeam(teamId: number): Promise<Members[]> {
+  async getMembersByTeam(teamId: number): Promise<Member[]> {
     return this.prisma.handleDbOperation(
-      this.prisma.members.findMany({
+      this.prisma.member.findMany({
         where: {
           teamId: teamId,
         },
@@ -26,7 +26,7 @@ export class MembersService {
   async getMemberInfo(playerId: number, teamId: number): Promise<any> {
     // const player = await this.player.getPlayerInfo(playerId);
     return this.prisma.handleDbOperation(
-      this.prisma.members.findUnique({
+      this.prisma.member.findUnique({
         where: {
           playerId_teamId: {
             playerId: playerId,
@@ -34,9 +34,9 @@ export class MembersService {
           },
         },
         select: {
-          Player: true,
-          memberRole: true,
-          memberRegistrationDate: true,
+          player: true,
+          role: true,
+          registrationDate: true,
         },
       }),
     );
@@ -46,7 +46,7 @@ export class MembersService {
     await this.player.getPlayerById(data.playerId);
     await this.team.getTeamById(data.teamId);
     return this.prisma.handleDbOperation(
-      this.prisma.members.create({
+      this.prisma.member.create({
         data,
       }),
     );
@@ -64,7 +64,7 @@ export class MembersService {
     if (this.validateRole(capId, teamId)) {
       if (role === cap) {
         this.prisma.handleDbOperation(
-          this.prisma.members.update({
+          this.prisma.member.update({
             where: {
               playerId_teamId: {
                 playerId: playerId,
@@ -72,12 +72,12 @@ export class MembersService {
               },
             },
             data: {
-              memberRole: role,
+              role: role,
             },
           }),
         );
         return this.prisma.handleDbOperation(
-          this.prisma.members.update({
+          this.prisma.member.update({
             where: {
               playerId_teamId: {
                 playerId: capId,
@@ -85,13 +85,13 @@ export class MembersService {
               },
             },
             data: {
-              memberRole: player,
+              role: player,
             },
           }),
         );
       } else if (role === SubCap) {
         return this.prisma.handleDbOperation(
-          this.prisma.members.update({
+          this.prisma.member.update({
             where: {
               playerId_teamId: {
                 playerId: playerId,
@@ -99,7 +99,7 @@ export class MembersService {
               },
             },
             data: {
-              memberRole: role,
+              role: role,
             },
           }),
         );
@@ -117,7 +117,7 @@ export class MembersService {
     status: boolean,
   ): Promise<UpdateMemberDto> {
     return this.prisma.handleDbOperation(
-      this.prisma.members.update({
+      this.prisma.member.update({
         where: {
           playerId_teamId: {
             playerId: playerId,
@@ -125,7 +125,7 @@ export class MembersService {
           },
         },
         data: {
-          memberStatus: status,
+          status: status,
         },
       }),
     );
@@ -133,7 +133,7 @@ export class MembersService {
 
   async deleteMember(playerId: number, teamId: number): Promise<any> {
     return this.prisma.handleDbOperation(
-      this.prisma.members.delete({
+      this.prisma.member.delete({
         where: {
           playerId_teamId: {
             playerId: playerId,
@@ -145,7 +145,7 @@ export class MembersService {
   }
 
   async validateRole(playerId: number, teamId: number): Promise<boolean> {
-    const role = await this.prisma.members.findUnique({
+    const role = await this.prisma.member.findUnique({
       where: {
         playerId_teamId: {
           playerId: playerId,
@@ -153,11 +153,11 @@ export class MembersService {
         },
       },
       select: {
-        memberRole: true,
+        role: true,
       },
     });
 
-    if (role.memberRole === 'C') {
+    if (role.role === 'C') {
       return true;
     } else {
       return false;

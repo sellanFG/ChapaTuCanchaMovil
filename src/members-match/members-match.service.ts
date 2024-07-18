@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { match } from 'assert';
 import { CreateMatchDto } from 'src/match/dto/create-match.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { PLUSDAYS } from '../utils/constants';
 import { MembersMatchEntity } from './entities/members-match.entity';
 @Injectable()
 export class MembersMatchService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   createMany(data: MembersMatchEntity[]) {
     return this.prisma.handleDbOperation(
-      this.prisma.membersMatch.createMany({
+      this.prisma.matchMember.createMany({
         data,
       }),
     );
@@ -20,28 +21,28 @@ export class MembersMatchService {
     if (!data) {
       return null;
     }
-    const { matchDate, matchTime } = data.Match;
-    const date = new Date(matchDate + ' ' + matchTime);
+    const { date, time } = data.match;
+    const matchDate = new Date(date + ' ' + time);
 
-    return new Date(date.setDate(date.getDate() + PLUSDAYS));
+    return new Date(date.setDate(matchDate.getDate() + PLUSDAYS));
   }
 
   private getLastDateUserMatch(playerId: number) {
-    return this.prisma.membersMatch.findFirst({
+    return this.prisma.matchMember.findFirst({
       where: {
         playerId,
       },
       orderBy: {
-        Match: {
-          matchDate: 'desc',
+        match: {
+          date: 'desc',
         },
       },
       select: {
         playerId: true,
-        Match: {
+        match: {
           select: {
-            matchDate: true,
-            matchTime: true,
+            date: true,
+            time: true,
           },
         },
       },

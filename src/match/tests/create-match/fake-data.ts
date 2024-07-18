@@ -64,9 +64,9 @@ export const match = new MatchEntity(matchId, matchDto);
 
 export const infoMatch = {
   matchId,
-  matchDate: matchDto.matchDate,
-  matchTime: matchDto.matchTime,
-  matchDistrict: matchDto.matchDistrict,
+  matchDate: matchDto.date,
+  matchTime: matchDto.time,
+  matchDistrict: matchDto.district,
   Sport: {
     sportId: matchDto.sportId,
     sportName: faker.internet.userName(),

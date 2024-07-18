@@ -20,26 +20,26 @@ export class CreateTeamDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  teamName: string;
+  name: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  teamLogo: string;
+  logo: string;
 
   @Transform(({ value }) => new Date(value))
   @ApiProperty()
   @IsDate()
   @IsNotEmpty()
-  teamRegistrationDate: Date;
+  registrationDate: Date;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @MaxLength(1)
   @MinLength(1)
-  teamSearchStatus: string;
+  searchStatus: string;
 
   @IsInt()
   @IsNotEmpty()

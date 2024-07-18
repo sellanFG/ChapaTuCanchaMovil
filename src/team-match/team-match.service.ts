@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TeamMatchService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   getNosFaltaUno(matchId: number): Promise<TeamMatch[]> {
     return this.prisma.teamMatch.findMany({
@@ -12,13 +12,13 @@ export class TeamMatchService {
         matchId: matchId,
       },
       include: {
-        Player: {
+        player: {
           select: {
             playerId: true,
-            playerUserName: true,
-            playerImage: true,
-            playerFirstName: true,
-            playerLastName: true,
+            userName: true,
+            image: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -31,11 +31,11 @@ export class TeamMatchService {
         matchId,
       },
       include: {
-        Team: {
+        team: {
           select: {
             teamId: true,
-            teamName: true,
-            teamLogo: true,
+            name: true,
+            logo: true,
           },
         },
       },

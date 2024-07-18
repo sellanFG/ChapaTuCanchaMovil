@@ -8,7 +8,7 @@ export class AnswerService {
   constructor(
     private prisma: PrismaService,
     private questionService: QuestionsTemplateService,
-  ) {}
+  ) { }
 
   getAll(): Promise<Answer[]> {
     return this.prisma.handleDbOperation(this.prisma.answer.findMany());
@@ -20,7 +20,7 @@ export class AnswerService {
     return this.prisma.handleDbOperation(
       this.prisma.answer.findMany({
         where: {
-          questionsTemplateId: questionId,
+          questionTemplateId: questionId,
         },
       }),
     );

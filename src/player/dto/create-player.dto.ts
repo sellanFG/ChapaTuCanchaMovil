@@ -1,82 +1,82 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsDate, IsEmail, IsNotEmpty, IsString, MaxLength, MinLength,IsEmpty, MinDate, IsBoolean, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsDate, IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, MaxLength, MinDate, MinLength } from 'class-validator';
 
 export class CreatePlayerDto {
-    
+
     @IsString()
     @IsNotEmpty()
     @MaxLength(100)
     @ApiProperty()
-    playerUserName: string;
+    userName: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(255)
-    playerPassword: string;
+    password: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(100)
     @ApiProperty()
-    playerFirstName: string;
+    firstName: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(100)
     @ApiProperty()
-    playerLastName: string;
+    lastName: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(9)
     @MinLength(9)
     @ApiProperty()
-    playerPhoneNumber: string;
+    phoneNumber: string;
 
     @IsEmail()
     @IsOptional()
     @MaxLength(100)
     @ApiProperty()
-    playerEmail?: string;
+    email?: string;
 
     @IsDate()
     @IsNotEmpty()
-    @MinDate(new Date(2009,1,1))
+    @MinDate(new Date(2009, 1, 1))
     @ApiProperty()
-    playerBirthDate: Date;
+    birthDate: Date;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(255)
-    playerImage: string;
+    image: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(20)
     @ApiProperty()
-    playerGender: string;
+    gender: string;
 
     @IsString()
     @IsNotEmpty()
     @MaxLength(50)
     @ApiProperty()
-    playerDistrict: string;
+    district: string;
 
     @IsDate()
     @IsNotEmpty()
-    playerRegistrationDate: Date;
+    registrationDate: Date;
 
     @IsBoolean()
     @IsNotEmpty()
-    playerAvailability: boolean;
+    availability: boolean;
 
     @IsBoolean()
     @IsNotEmpty()
     @ApiProperty()
-    playerSubscription: boolean;
+    subscription: boolean;
 
     @IsBoolean()
     @IsNotEmpty()
-    playerSearchStatus: boolean;
+    searchStatus: boolean;
 
 }

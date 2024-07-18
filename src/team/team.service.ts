@@ -8,13 +8,13 @@ import { TeamEntity } from './entities/team.entity';
 
 @Injectable()
 export class TeamService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   getTeams() {
     return this.prisma.handleDbOperation(
       this.prisma.team.findMany({
         include: {
-          Sport: true,
+          sport: true,
         },
       }),
     );
@@ -37,34 +37,34 @@ export class TeamService {
           sportId: sportId,
         },
         include: {
-          Sport: true,
+          sport: true,
         },
       }),
     );
   }
   async create(data: CreateTeamDto): Promise<Team> {
     const teamData = new TeamEntity(
-      data.teamName,
-      data.teamLogo,
-      data.teamSearchStatus,
+      data.name,
+      data.logo,
+      data.searchStatus,
       data.sportId,
-      data.teamRegistrationDate,
+      data.registrationDate,
     );
     const membersData = new MembersEntity(
       data.playerId,
       'P',
-      data.teamRegistrationDate,
+      data.registrationDate
     );
 
     return this.prisma.team.create({
       data: {
         ...teamData,
-        Members: {
+        members: {
           create: membersData,
         },
       },
       include: {
-        Sport: true,
+        sport: true,
       },
     });
   }
@@ -77,7 +77,7 @@ export class TeamService {
         },
         data,
         include: {
-          Sport: true,
+          sport: true,
         },
       }),
     );
@@ -85,7 +85,7 @@ export class TeamService {
 
   async deleteTeam(id: number) {
     try {
-      const deleteMembers = this.prisma.members.deleteMany({
+      const deleteMembers = this.prisma.member.deleteMany({
         where: {
           teamId: id,
         },

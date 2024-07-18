@@ -14,7 +14,7 @@ export class PlayerService {
   constructor(
     private prisma: PrismaService,
     public membersMatchService: MembersMatchService,
-  ) {}
+  ) { }
 
   async getPlayers(): Promise<Player[]> {
     return await this.prisma.handleDbOperation(this.prisma.player.findMany());
@@ -78,9 +78,9 @@ export class PlayerService {
           playerId: id,
         },
         select: {
-          playerFirstName: true,
-          playerLastName: true,
-          playerPhoneNumber: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
         },
       }),
     );

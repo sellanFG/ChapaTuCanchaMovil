@@ -3,10 +3,10 @@ import { CreateMatchDto } from '../dto/create-match.dto';
 export class MatchEntity {
   constructor(matchId: number, data: CreateMatchDto) {
     this.matchId = matchId;
-    this.matchDate = data.matchDate;
-    this.matchTime = data.matchTime;
-    this.matchDistrict = data.matchDistrict;
-    this.matchRegistrationDate = data.matchRegistrationDate;
+    this.matchDate = data.date;
+    this.matchTime = data.time;
+    this.matchDistrict = data.district;
+    this.matchRegistrationDate = data.registrationDate;
     this.stateField = data.stateField;
     this.sportId = data.sportId;
     this.gameModeId = data.gameModeId;

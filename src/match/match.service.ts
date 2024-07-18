@@ -16,35 +16,35 @@ export class MatchService {
     private teamMatchService: TeamMatchService,
     private playerService: PlayerService,
     private memberMatchService: MembersMatchService,
-  ) {}
+  ) { }
 
   getMatches(): Promise<GetMatch[]> {
     return this.prisma.handleDbOperation(
       this.prisma.match.findMany({
         select: {
           matchId: true,
-          matchDate: true,
-          matchTime: true,
-          matchDistrict: true,
-          matchRegistrationDate: true,
+          date: true,
+          time: true,
+          district: true,
+          registrationDate: true,
           stateField: true,
-          Sport: {
+          sport: {
             select: {
               sportId: true,
-              sportImage: true,
-              sportName: true,
+              image: true,
+              name: true,
             },
           },
-          GameMode: {
+          gameMode: {
             select: {
               gameModeId: true,
-              gameModeName: true,
+              name: true,
             },
           },
-          SportField: {
+          sportField: {
             select: {
               sportFieldId: true,
-              sportFieldName: true,
+              name: true,
             },
           },
         },
@@ -60,28 +60,28 @@ export class MatchService {
         },
         select: {
           matchId: true,
-          matchDate: true,
-          matchTime: true,
-          matchDistrict: true,
-          matchRegistrationDate: true,
+          date: true,
+          time: true,
+          district: true,
+          registrationDate: true,
           stateField: true,
-          Sport: {
+          sport: {
             select: {
               sportId: true,
-              sportImage: true,
-              sportName: true,
+              image: true,
+              name: true,
             },
           },
-          GameMode: {
+          gameMode: {
             select: {
               gameModeId: true,
-              gameModeName: true,
+              name: true,
             },
           },
-          SportField: {
+          sportField: {
             select: {
               sportFieldId: true,
-              sportFieldName: true,
+              name: true,
             },
           },
         },
@@ -128,7 +128,7 @@ export class MatchService {
           matchId,
         );
 
-        const createMembersMatch = await tx.membersMatch.createMany({
+        const createMembersMatch = await tx.matchMember.createMany({
           data: membersMatch,
         });
 
@@ -145,7 +145,7 @@ export class MatchService {
             },
           },
           data: {
-            playerAvailability: false,
+            availability: false,
           },
         });
         if (updateAvailability.count != playersNotSubscribIds.length) {
@@ -208,7 +208,7 @@ export class MatchService {
     const playersInfo = await this.playerService.getAllPlayerInfo(usersId);
 
     return playersInfo
-      .filter((p) => !p.playerSubscription)
+      .filter((p) => !p.subscription)
       .map((p) => p.playerId);
   }
 
@@ -219,20 +219,20 @@ export class MatchService {
       },
       select: {
         matchId: true,
-        matchDate: true,
-        matchTime: true,
-        matchDistrict: true,
-        Sport: {
+        date: true,
+        time: true,
+        district: true,
+        sport: {
           select: {
             sportId: true,
-            sportName: true,
-            sportImage: true,
+            name: true,
+            image: true,
           },
         },
-        GameMode: {
+        gameMode: {
           select: {
             gameModeId: true,
-            gameModeName: true,
+            name: true,
           },
         },
       },

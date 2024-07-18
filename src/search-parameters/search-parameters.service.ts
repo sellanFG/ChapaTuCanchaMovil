@@ -1,25 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSearchParameterDto } from './dto/create-search-parameter.dto';
+import { SearchParameter } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { SearchParameters } from '@prisma/client';
+import { CreateSearchParameterDto } from './dto/create-search-parameter.dto';
 
 @Injectable()
 export class SearchParametersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  create(data: CreateSearchParameterDto): Promise<SearchParameters> {
-    return this.prisma.handleDbOperation(
-      this.prisma.searchParameters.create({
-        data,
-      }),
-    );
+  create(data: CreateSearchParameterDto): Promise<SearchParameter> {
+    return null
+    // return this.prisma.handleDbOperation(
+    //   this.prisma.searchParameters.create({
+    //     data,
+    //   }),
+    // );
   }
 
-  delete(id: number): Promise<SearchParameters> {
+  delete(id: number): Promise<SearchParameter> {
     return this.prisma.handleDbOperation(
-      this.prisma.searchParameters.delete({
+      this.prisma.searchParameter.delete({
         where: {
-          searchParametersId: id,
+          searchParameterId: id,
         },
       }),
     );

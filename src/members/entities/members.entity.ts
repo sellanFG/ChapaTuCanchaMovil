@@ -6,12 +6,12 @@ export class MembersEntity {
     teamId?: number,
   ) {
     this.playerId = playerId;
-    this.memberRole = rol;
-    this.memberRegistrationDate = registrationDate;
+    this.role = rol;
+    this.registrationDate = registrationDate;
     this.teamId = teamId;
   }
   teamId: number;
   playerId: number;
-  memberRole: string;
-  memberRegistrationDate: Date;
+  role: string;
+  registrationDate: Date;
 }

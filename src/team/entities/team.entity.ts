@@ -8,15 +8,15 @@ export class TeamEntity {
     sportId: number,
     teamRegistrationDate: Date,
   ) {
-    this.teamName = teamName;
-    this.teamLogo = teamLogo;
-    this.teamSearchStatus = teamSearchStatus;
+    this.name = teamName;
+    this.logo = teamLogo;
+    this.searchStatus = teamSearchStatus;
     this.sportId = sportId;
-    this.teamRegistrationDate = teamRegistrationDate;
+    this.registrationDate = teamRegistrationDate;
   }
-  teamName: string;
-  teamLogo: string;
-  teamRegistrationDate: Date;
-  teamSearchStatus: string;
+  name: string;
+  logo: string;
+  registrationDate: Date;
+  searchStatus: string;
   sportId: number;
 }

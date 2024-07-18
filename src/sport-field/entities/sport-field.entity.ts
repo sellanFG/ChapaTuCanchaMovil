@@ -1,12 +1,12 @@
-import {ApiProperty} from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class sportField {
   @ApiProperty()
   sportFieldId: number;
 
   @ApiProperty()
-  sportFieldName: string;
+  name: string;
 
   @ApiProperty()
-  sportFieldAddress: string;
+  address: string;
 }

@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Preference } from './dto/createPreferenceDto.dto';
 import { CreatePreferenceDto, UpdatePreferenceDto } from './dto/index';
 import { PreferencesEntity } from './entities/preferences.entity';
 import {
   ArrayPreferences,
   PreferencesInterface,
 } from './interfaces/preferences.interface';
-import { Preference } from './dto/createPreferenceDto.dto';
 
 @Injectable()
 export class PreferencesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(data: CreatePreferenceDto): Promise<PreferencesInterface[]> {
     const { playerId, preferences } = data;
-    await this.prisma.preferences.createMany({
+    await this.prisma.preference.createMany({
       data: preferences.map(
         (p) => new PreferencesEntity(p.answerId, playerId, p.sportId),
       ),
@@ -29,7 +29,7 @@ export class PreferencesService {
     const answerIds = preferences?.map((p) => p.answerId);
     const sportIds = preferences?.map((p) => p.sportId);
 
-    const query = await this.prisma.preferences.findMany({
+    const query = await this.prisma.preference.findMany({
       where: {
         playerId,
         answerId: {
@@ -40,11 +40,11 @@ export class PreferencesService {
         },
       },
       include: {
-        Answer: {
+        answer: {
           include: {
-            Question: {
+            question: {
               include: {
-                Sport: true,
+                sport: true,
               },
             },
           },
@@ -82,7 +82,7 @@ export class PreferencesService {
 
   async update(answerId: number, data: UpdatePreferenceDto) {
     const { playerId, sportId } = data;
-    await this.prisma.preferences.update({
+    await this.prisma.preference.update({
       where: {
         playerId_answerId_sportId: {
           answerId,

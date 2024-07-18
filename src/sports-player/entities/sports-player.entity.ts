@@ -1,11 +1,11 @@
 interface Sport {
-  sportName: string;
-  sportDescription: string;
-  sportImage: string;
+  name: string;
+  description: string;
+  image: string;
 }
 
 export class SportsPlayerEntity {
   sportId: number;
   playerId: number;
-  Sport: Sport;
+  sport: Sport;
 }

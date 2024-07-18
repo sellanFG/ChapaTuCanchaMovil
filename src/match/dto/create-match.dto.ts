@@ -25,10 +25,10 @@ export class CreateMatchDto {
     usersId1: number[],
     usersId2: number[],
   ) {
-    this.matchDate = matchDate;
-    this.matchTime = matchTime;
-    this.matchDistrict = matchDistrict;
-    this.matchRegistrationDate = matchRegistrationDate;
+    this.date = matchDate;
+    this.time = matchTime;
+    this.district = matchDistrict;
+    this.registrationDate = matchRegistrationDate;
     this.stateField = stateField;
     this.sportId = sportId;
     this.gameModeId = gameModeId;
@@ -42,25 +42,25 @@ export class CreateMatchDto {
   @IsDate()
   @IsNotEmpty()
   @ApiProperty()
-  matchDate: Date;
+  date: Date;
 
   @Transform(({ value }) => new Date(value))
   @IsDate()
   @IsNotEmpty()
   @ApiProperty()
-  matchTime: Date;
+  time: Date;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
   @ApiProperty()
-  matchDistrict: string;
+  district: string;
 
   @Transform(({ value }) => new Date(value))
   @IsDate()
   @IsNotEmpty()
   @ApiProperty()
-  matchRegistrationDate: Date;
+  registrationDate: Date;
 
   @IsBoolean()
   @IsNotEmpty()

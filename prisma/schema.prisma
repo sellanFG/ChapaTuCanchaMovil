@@ -68,7 +68,7 @@ model Player {
   firstName        String        @db.VarChar(100)
   lastName         String        @db.VarChar(100)
   phoneNumber      String        @db.Char(9)
-  email            String?       @db.VarChar(100)
+  email            String        @db.VarChar(100)
   birthDate        DateTime      @db.Date()
   image            String        @db.VarChar(255)
   gender           String        @db.VarChar(20)

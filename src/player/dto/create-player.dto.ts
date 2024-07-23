@@ -1,8 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, MaxLength, MinDate, MinLength } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import {
+    IsDate,
+    IsEmail,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    MaxDate,
+    MaxLength,
+    MinDate,
+    MinLength,
+} from 'class-validator';
 
 export class CreatePlayerDto {
-
     @IsString()
     @IsNotEmpty()
     @MaxLength(100)
@@ -37,16 +47,18 @@ export class CreatePlayerDto {
     @IsOptional()
     @MaxLength(100)
     @ApiProperty()
-    email?: string;
+    email: string;
 
+    @Transform(({ value }) => new Date(value))
     @IsDate()
     @IsNotEmpty()
-    @MinDate(new Date(2009, 1, 1))
-    @ApiProperty()
+    @MaxDate(new Date(new Date().getFullYear() - 18, 12, 31))
+    @MinDate(new Date(1940, 1, 1))
     birthDate: Date;
 
+
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(255)
     image: string;
 
@@ -61,22 +73,4 @@ export class CreatePlayerDto {
     @MaxLength(50)
     @ApiProperty()
     district: string;
-
-    @IsDate()
-    @IsNotEmpty()
-    registrationDate: Date;
-
-    @IsBoolean()
-    @IsNotEmpty()
-    availability: boolean;
-
-    @IsBoolean()
-    @IsNotEmpty()
-    @ApiProperty()
-    subscription: boolean;
-
-    @IsBoolean()
-    @IsNotEmpty()
-    searchStatus: boolean;
-
 }

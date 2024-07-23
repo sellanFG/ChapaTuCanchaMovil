@@ -16,6 +16,43 @@ export class PlayerService {
     public membersMatchService: MembersMatchService,
   ) { }
 
+  async getPlayerByPhoneNumber(phoneNumber: string): Promise<Player> {
+
+    //Validar que sea un número valido
+    const player = await this.prisma.player.findFirst({
+      where: {
+        phoneNumber,
+      }
+    })
+    if (!player) {
+      throw new NotFoundException({
+        status: false,
+        data: null,
+        message: `Player with phone number ${phoneNumber} not found`,
+      });
+
+    }
+    return player
+  }
+
+  async getPlayerByEmail(email: string): Promise<Player> {
+    //Validar que sea un email válido
+    const player = await this.prisma.player.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!player) {
+      throw new NotFoundException({
+        status: false,
+        data: null,
+        message: `Player with email ${email} not found`,
+      });
+    }
+
+    return player;
+  }
   async getPlayers(): Promise<Player[]> {
     return await this.prisma.handleDbOperation(this.prisma.player.findMany());
   }

@@ -16,6 +16,7 @@ import { MembersMatchModule } from './members-match/members-match.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SportsPlayerModule } from './sports-player/sports-player.module';
 import { SearchParametersModule } from './search-parameters/search-parameters.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { SearchParametersModule } from './search-parameters/search-parameters.mo
     PrismaModule,
     SportsPlayerModule,
     SearchParametersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -37,7 +37,10 @@ export class PlayerService {
   async createPlayer(data: CreatePlayerDto): Promise<Player> {
     const playerCreated = await this.prisma.handleDbOperation(
       this.prisma.player.create({
-        data,
+        data: {
+          ...data,
+          registrationDate: new Date(),
+        },
       }),
     );
     if (!playerCreated) {

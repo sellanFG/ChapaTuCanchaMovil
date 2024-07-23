@@ -9,6 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import bcrypt from 'bcrypt';
 import { CreatePlayerDto, UpdatePlayerDto } from './dto';
 import { UpdatePlayerAvailabilityDto } from './dto/update-player-availability.dto';
 import { PlayerService } from './player.service';
@@ -16,7 +17,7 @@ import { PlayerService } from './player.service';
 @ApiTags('player')
 @Controller('player')
 export class PlayerController {
-  constructor(private readonly playerService: PlayerService) {}
+  constructor(private readonly playerService: PlayerService) { }
 
   @Get()
   async getPlayers() {
@@ -30,6 +31,12 @@ export class PlayerController {
 
   @Post()
   async createPlayer(@Body() data: CreatePlayerDto) {
+    const { password } = data;
+
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
+    data.password = hash;
+
     return this.playerService.createPlayer(data);
   }
 

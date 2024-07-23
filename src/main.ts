@@ -13,6 +13,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.setGlobalPrefix('/api/v1');
   const config = new DocumentBuilder()
     .setTitle('acTeam')
     .setDescription('Initial API')
